@@ -1,0 +1,225 @@
+Total Elements Summary (All Layers Combined)
+Epoch      Stage                Non-zero        Zero            Total           Sparsity  
+----------------------------------------------------------------------
+0000       after_training       380,827         19,947,173      20,328,000      98.13     %
+0000       after_pruning        278,576         20,049,424      20,328,000      98.63     %
+0001       after_training       380,776         19,947,224      20,328,000      98.13     %
+0001       after_pruning        278,540         20,049,460      20,328,000      98.63     %
+0002       after_training       380,792         19,947,208      20,328,000      98.13     %
+0002       after_pruning        278,552         20,049,448      20,328,000      98.63     %
+0003       after_training       380,743         19,947,257      20,328,000      98.13     %
+0003       after_pruning        278,516         20,049,484      20,328,000      98.63     %
+0004       after_training       380,740         19,947,260      20,328,000      98.13     %
+0004       after_pruning        278,515         20,049,485      20,328,000      98.63     %
+0005       after_training       380,758         19,947,242      20,328,000      98.13     %
+0005       after_pruning        278,528         20,049,472      20,328,000      98.63     %
+0006       after_training       380,749         19,947,251      20,328,000      98.13     %
+0006       after_pruning        278,521         20,049,479      20,328,000      98.63     %
+0007       after_training       380,777         19,947,223      20,328,000      98.13     %
+0007       after_pruning        278,540         20,049,460      20,328,000      98.63     %
+0008       after_training       380,760         19,947,240      20,328,000      98.13     %
+0008       after_pruning        278,529         20,049,471      20,328,000      98.63     %
+0009       after_training       380,773         19,947,227      20,328,000      98.13     %
+
+######################################################################
+Detailed Analysis for Epoch: epoch_0000
+----------------------------------------------------------------------
+# After Training Stage
+File: SET-MLP-Keras-Weights-Mask/results/graph_snapshots/epoch_0000/after_training/weight_layer_1.npy
+Shape: (3072, 4000)
+Data type: float32
+Total elements: 12,288,000
+
+Statistics:
+  Min: -0.032058
+  Max: 0.032451
+  Mean: 0.000001
+  Std: 0.001807
+
+Sparsity:
+  Non-zero elements: 141,281 (1.15%)
+  Zero elements: 12,146,719 (98.85%)
+File: SET-MLP-Keras-Weights-Mask/results/graph_snapshots/epoch_0000/after_training/weight_layer_2.npy
+Shape: (4000, 1000)
+Data type: float32
+Total elements: 4,000,000
+
+Statistics:
+  Min: -0.035906
+  Max: 0.039840
+  Mean: 0.000001
+  Std: 0.003162
+
+Sparsity:
+  Non-zero elements: 99,776 (2.49%)
+  Zero elements: 3,900,224 (97.51%)
+File: SET-MLP-Keras-Weights-Mask/results/graph_snapshots/epoch_0000/after_training/weight_layer_3.npy
+Shape: (1000, 4000)
+Data type: float32
+Total elements: 4,000,000
+
+Statistics:
+  Min: -0.037428
+  Max: 0.040222
+  Mean: -0.000000
+  Std: 0.003166
+
+Sparsity:
+  Non-zero elements: 99,770 (2.49%)
+  Zero elements: 3,900,230 (97.51%)
+File: SET-MLP-Keras-Weights-Mask/results/graph_snapshots/epoch_0000/after_training/weight_layer_4.npy
+Shape: (4000, 10)
+Data type: float32
+Total elements: 40,000
+
+Statistics:
+  Min: -0.050238
+  Max: 0.050695
+  Mean: 0.000133
+  Std: 0.022548
+
+Sparsity:
+  Non-zero elements: 40,000 (100.00%)
+  Zero elements: 0 (0.00%)
+File: SET-MLP-Keras-Weights-Mask/results/graph_snapshots/epoch_0000/after_training/mask_layer_1.npy
+Shape: (3072, 4000)
+Data type: float64
+Total elements: 12,288,000
+
+Statistics:
+  Min: 0.000000
+  Max: 1.000000
+  Mean: 0.011497
+  Std: 0.106608
+
+Sparsity:
+  Non-zero elements: 141,281 (1.15%)
+  Zero elements: 12,146,719 (98.85%)
+File: SET-MLP-Keras-Weights-Mask/results/graph_snapshots/epoch_0000/after_training/mask_layer_2.npy
+Shape: (4000, 1000)
+Data type: float64
+Total elements: 4,000,000
+
+Statistics:
+  Min: 0.000000
+  Max: 1.000000
+  Mean: 0.024944
+  Std: 0.155954
+
+Sparsity:
+  Non-zero elements: 99,776 (2.49%)
+  Zero elements: 3,900,224 (97.51%)
+File: SET-MLP-Keras-Weights-Mask/results/graph_snapshots/epoch_0000/after_training/mask_layer_3.npy
+Shape: (1000, 4000)
+Data type: float64
+Total elements: 4,000,000
+
+Statistics:
+  Min: 0.000000
+  Max: 1.000000
+  Mean: 0.024942
+  Std: 0.155950
+
+Sparsity:
+  Non-zero elements: 99,770 (2.49%)
+  Zero elements: 3,900,230 (97.51%)
+----------------------------------------------------------------------
+# After Pruning Stage
+File: SET-MLP-Keras-Weights-Mask/results/graph_snapshots/epoch_0000/after_pruning/weight_layer_1.npy
+Shape: (3072, 4000)
+Data type: float32
+Total elements: 12,288,000
+
+Statistics:
+  Min: -0.032058
+  Max: 0.032451
+  Mean: 0.000001
+  Std: 0.001783
+
+Sparsity:
+  Non-zero elements: 98,896 (0.80%)
+  Zero elements: 12,189,104 (99.20%)
+File: SET-MLP-Keras-Weights-Mask/results/graph_snapshots/epoch_0000/after_pruning/weight_layer_2.npy
+Shape: (4000, 1000)
+Data type: float32
+Total elements: 4,000,000
+
+Statistics:
+  Min: -0.035906
+  Max: 0.039840
+  Mean: 0.000001
+  Std: 0.003120
+
+Sparsity:
+  Non-zero elements: 69,842 (1.75%)
+  Zero elements: 3,930,158 (98.25%)
+File: SET-MLP-Keras-Weights-Mask/results/graph_snapshots/epoch_0000/after_pruning/weight_layer_3.npy
+Shape: (1000, 4000)
+Data type: float32
+Total elements: 4,000,000
+
+Statistics:
+  Min: -0.037428
+  Max: 0.040222
+  Mean: -0.000000
+  Std: 0.003123
+
+Sparsity:
+  Non-zero elements: 69,838 (1.75%)
+  Zero elements: 3,930,162 (98.25%)
+File: SET-MLP-Keras-Weights-Mask/results/graph_snapshots/epoch_0000/after_pruning/weight_layer_4.npy
+Shape: (4000, 10)
+Data type: float32
+Total elements: 40,000
+
+Statistics:
+  Min: -0.050238
+  Max: 0.050695
+  Mean: 0.000133
+  Std: 0.022548
+
+Sparsity:
+  Non-zero elements: 40,000 (100.00%)
+  Zero elements: 0 (0.00%)
+File: SET-MLP-Keras-Weights-Mask/results/graph_snapshots/epoch_0000/after_pruning/mask_layer_1.npy
+Shape: (3072, 4000)
+Data type: float32
+Total elements: 12,288,000
+
+Statistics:
+  Min: 0.000000
+  Max: 1.000000
+  Mean: 0.011497
+  Std: 0.106608
+
+Sparsity:
+  Non-zero elements: 141,281 (1.15%)
+  Zero elements: 12,146,719 (98.85%)
+File: SET-MLP-Keras-Weights-Mask/results/graph_snapshots/epoch_0000/after_pruning/mask_layer_2.npy
+Shape: (4000, 1000)
+Data type: float32
+Total elements: 4,000,000
+
+Statistics:
+  Min: 0.000000
+  Max: 1.000000
+  Mean: 0.024944
+  Std: 0.155954
+
+Sparsity:
+  Non-zero elements: 99,776 (2.49%)
+  Zero elements: 3,900,224 (97.51%)
+File: SET-MLP-Keras-Weights-Mask/results/graph_snapshots/epoch_0000/after_pruning/mask_layer_3.npy
+Shape: (1000, 4000)
+Data type: float32
+Total elements: 4,000,000
+
+Statistics:
+  Min: 0.000000
+  Max: 1.000000
+  Mean: 0.024943
+  Std: 0.155950
+
+Sparsity:
+  Non-zero elements: 99,770 (2.49%)
+  Zero elements: 3,900,230 (97.51%)

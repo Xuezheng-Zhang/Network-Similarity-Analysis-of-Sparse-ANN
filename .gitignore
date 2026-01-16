@@ -1,0 +1,12 @@
+__pycache__/
+*.npz
+*.npy
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+
+# Logs
+*.log
+logs/

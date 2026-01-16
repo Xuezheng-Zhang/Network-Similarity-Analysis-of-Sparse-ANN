@@ -30,7 +30,6 @@ except ImportError:
             def get_config(self):
                 return {}
 
-SReLU = ReLU 
 
 class MaskWeights(Constraint):
     def __init__(self, mask):
@@ -87,17 +86,17 @@ class SET_MLP_CIFAR10:
         
         # first hidden layer
         self.model.add(Dense(4000, name="sparse_1", kernel_constraint=MaskWeights(self.wm1), use_bias=True))
-        self.model.add(SReLU(name="srelu1"))
+        self.model.add(ReLU(name="srelu1"))
         self.model.add(Dropout(0.3))
         
         # second hidden layer
         self.model.add(Dense(1000, name="sparse_2", kernel_constraint=MaskWeights(self.wm2), use_bias=True))
-        self.model.add(SReLU(name="srelu2"))
+        self.model.add(ReLU(name="srelu2"))
         self.model.add(Dropout(0.3))
         
         # third hidden layer
         self.model.add(Dense(4000, name="sparse_3", kernel_constraint=MaskWeights(self.wm3), use_bias=True))
-        self.model.add(SReLU(name="srelu3"))
+        self.model.add(ReLU(name="srelu3"))
         self.model.add(Dropout(0.3))
         
         # output layer

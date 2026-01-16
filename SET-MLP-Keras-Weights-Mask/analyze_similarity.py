@@ -61,7 +61,7 @@ def compute_similarity(file1, file2, g=5, matrix_type='binary'):
         print(f"Error computing similarity between {file1} and {file2}: {e}")
         return None
 
-def analyze_epoch_similarities(base_dir, output_file, g=5, matrix_type='binary'):
+def analyze_epoch_similarities(base_dir, output_file, g=5, n=1, matrix_type='binary'):
     """
     Analyze similarities between consecutive epochs and within each epoch
     
@@ -80,15 +80,16 @@ def analyze_epoch_similarities(base_dir, output_file, g=5, matrix_type='binary')
     print(f"Found {len(epoch_dirs)} epochs")
     print(f"Matrix type: {matrix_type}")
     print(f"DeltaCon parameter g: {g}")
+    print(f"Number of epochs to compare: {n}")
     print("-" * 70)
     
     results = []
     
-    # Compute similarities between consecutive epochs (after_training)
-    print("\nComputing similarities between consecutive epochs (after_training)")
-    for i in range(len(epoch_dirs) - 1):
+    # Compute similarities between epoch and next n epoch (after_training)
+    print("\nComputing similarities between epochs (after_training)")
+    for i in range(len(epoch_dirs) - n):
         epoch1 = epoch_dirs[i]
-        epoch2 = epoch_dirs[i + 1]
+        epoch2 = epoch_dirs[i + n]
         epoch1_num = int(epoch1.split('_')[1])
         epoch2_num = int(epoch2.split('_')[1])
         
@@ -112,34 +113,34 @@ def analyze_epoch_similarities(base_dir, output_file, g=5, matrix_type='binary')
         else:
             print("Failed")
     
-    # 2. Compute similarities within each epoch (after_training vs after_pruning)
-    print("\n2. Computing similarities within epochs (after_training vs after_pruning) ")
-    for epoch_dir in epoch_dirs:
-        epoch_num = int(epoch_dir.split('_')[1])
+    # # 2. Compute similarities within each epoch (after_training vs after_pruning)
+    # print("\n2. Computing similarities within epochs (after_training vs after_pruning) ")
+    # for epoch_dir in epoch_dirs:
+    #     epoch_num = int(epoch_dir.split('_')[1])
         
-        file1 = os.path.join(base_dir, epoch_dir, f'after_training_{matrix_type}.npz')
-        file2 = os.path.join(base_dir, epoch_dir, f'after_pruning_{matrix_type}.npz')
+    #     file1 = os.path.join(base_dir, epoch_dir, f'after_training_{matrix_type}.npz')
+    #     file2 = os.path.join(base_dir, epoch_dir, f'after_pruning_{matrix_type}.npz')
         
-        if not os.path.exists(file2):
-            print(f"  Epoch {epoch_num}: after_pruning not found, skipping ")
-            continue
+    #     if not os.path.exists(file2):
+    #         print(f"  Epoch {epoch_num}: after_pruning not found, skipping ")
+    #         continue
         
-        print(f"  Computing: Epoch {epoch_num} (training vs pruning)", end=' ')
-        sim = compute_similarity(file1, file2, g, matrix_type)
+    #     print(f"  Computing: Epoch {epoch_num} (training vs pruning)", end=' ')
+    #     sim = compute_similarity(file1, file2, g, matrix_type)
         
-        if sim is not None:
-            results.append({
-                'Type': 'Within_Epoch',
-                'Epoch1': epoch_num,
-                'Epoch2': epoch_num,
-                'Stage1': 'after_training',
-                'Stage2': 'after_pruning',
-                'Similarity': sim,
-                'Matrix_Type': matrix_type
-            })
-            print(f"Similarity: {sim:.6f}")
-        else:
-            print("Failed")
+    #     if sim is not None:
+    #         results.append({
+    #             'Type': 'Within_Epoch',
+    #             'Epoch1': epoch_num,
+    #             'Epoch2': epoch_num,
+    #             'Stage1': 'after_training',
+    #             'Stage2': 'after_pruning',
+    #             'Similarity': sim,
+    #             'Matrix_Type': matrix_type
+    #         })
+    #         print(f"Similarity: {sim:.6f}")
+    #     else:
+    #         print("Failed")
     
     # Save results to CSV
     if results:
@@ -163,13 +164,18 @@ def main():
         g = 5
 
     if sys.argv[2:]:
-        matrix_type = sys.argv[2]
+        n = int(sys.argv[2])
+    else:
+        n = 1
+
+    if sys.argv[3:]:
+        matrix_type = sys.argv[3]
     else:
         matrix_type = 'binary'
         
     output_file = os.path.join(output_dir, f'deltacon_similarity_{matrix_type}.csv')
     start_time = time.time()
-    analyze_epoch_similarities(base_dir, output_file, g=g, matrix_type=matrix_type)
+    analyze_epoch_similarities(base_dir, output_file, g=g, n=n, matrix_type=matrix_type)
     end_time = time.time()
     
     print(f"\nProcessing time: {end_time - start_time:.2f} seconds")

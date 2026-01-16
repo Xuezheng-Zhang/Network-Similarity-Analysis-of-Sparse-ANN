@@ -37,7 +37,7 @@ def plot_similarity_within_epochs():
     plt.plot(epochs, similarities, marker='o', linestyle='-', color='r', linewidth=2, markersize=6)
     
     plt.title('DeltaCon Similarity Evolution', fontsize=14)
-    plt.xlabel('Epoch Transition (t to t+1)', fontsize=12)
+    plt.xlabel('Epoch Transition (t to t+n)', fontsize=12)
     plt.ylabel('Similarity Score', fontsize=12)
     plt.grid(True, which='both', linestyle='--', alpha=0.5)
     plt.xticks(epochs)

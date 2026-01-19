@@ -2,16 +2,24 @@ import numpy as np
 import os
 import sys
 from datetime import datetime
+from scipy.sparse import load_npz
+
+def load_matrix_file(filepath):
+    """
+    Load matrix from .npz file
+    """
+    sparse_matrix = load_npz(filepath)
+    return sparse_matrix.toarray()
 
 def test_npy_file(filepath, output_file):
-    """Test a single npy file"""
+    """Test a single npz file"""
     output_file.write(f"File: {filepath}\n")
     
     if not os.path.exists(filepath):
         output_file.write(f"File does not exist!\n")
         return
     
-    data = np.load(filepath)
+    data = load_matrix_file(filepath)
     
     output_file.write(f"Shape: {data.shape}\n")
     output_file.write(f"Data type: {data.dtype}\n")
@@ -51,9 +59,10 @@ def calculate_total_elements_per_epoch(epoch_dir, stage):
     
     # Calculate for all weight layers (1-4)
     for layer in [1, 2, 3, 4]:
-        weight_file = os.path.join(stage_dir, f"weight_layer_{layer}.npy")
+        weight_file = os.path.join(stage_dir, f"weight_layer_{layer}.npz")
+        
         if os.path.exists(weight_file):
-            data = np.load(weight_file)
+            data = load_matrix_file(weight_file)
             non_zero = np.count_nonzero(data)
             total_non_zero += non_zero
             total_zero += (data.size - non_zero)
@@ -121,13 +130,13 @@ if __name__ == '__main__':
                 
                 # Test weight files
                 for layer in [1, 2, 3, 4]:
-                    weight_file = os.path.join(after_training, f"weight_layer_{layer}.npy")
+                    weight_file = os.path.join(after_training, f"weight_layer_{layer}.npz")
                     if os.path.exists(weight_file):
                         test_npy_file(weight_file, output_file)
                 
                 # Test mask files
                 for layer in [1, 2, 3]:
-                    mask_file = os.path.join(after_training, f"mask_layer_{layer}.npy")
+                    mask_file = os.path.join(after_training, f"mask_layer_{layer}.npz")
                     if os.path.exists(mask_file):
                         test_npy_file(mask_file, output_file)
             
@@ -139,13 +148,13 @@ if __name__ == '__main__':
                 
                 # Test weight files
                 for layer in [1, 2, 3, 4]:
-                    weight_file = os.path.join(after_pruning, f"weight_layer_{layer}.npy")
+                    weight_file = os.path.join(after_pruning, f"weight_layer_{layer}.npz")
                     if os.path.exists(weight_file):
                         test_npy_file(weight_file, output_file)
                 
                 # Test mask files
                 for layer in [1, 2, 3]:
-                    mask_file = os.path.join(after_pruning, f"mask_layer_{layer}.npy")
+                    mask_file = os.path.join(after_pruning, f"mask_layer_{layer}.npz")
                     if os.path.exists(mask_file):
                         test_npy_file(mask_file, output_file)
     

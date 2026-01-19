@@ -173,12 +173,12 @@ def main():
     print(f"  Created: test_ring_12.npz (shape: {adj4.shape}, edges: {adj4.nnz})")
     
     # Test 5: Star graph (10 nodes)
-    adj5 = create_star_graph(10)
+    adj5 = create_star_graph(1000)
     save_npz(os.path.join(output_dir, "test_star_10.npz"), adj5)
     print(f"  Created: test_star_10.npz (shape: {adj5.shape}, edges: {adj5.nnz})")
     
     # Test 6: Complete graph (10 nodes)
-    adj6 = create_complete_graph(10)
+    adj6 = create_complete_graph(1000)
     save_npz(os.path.join(output_dir, "test_complete_10.npz"), adj6)
     print(f"  Created: test_complete_10.npz (shape: {adj6.shape}, edges: {adj6.nnz})")
     

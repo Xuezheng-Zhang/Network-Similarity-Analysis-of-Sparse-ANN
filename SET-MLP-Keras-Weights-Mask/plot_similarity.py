@@ -6,8 +6,10 @@ def plot_similarity_between_epochs():
     similarity_file = "SET-MLP-Keras-Weights-Mask/results/deltacon_similarity_binary.csv"
     df = pd.read_csv(similarity_file)
     between_epochs = df[df['Type'] == 'Between_Epochs'].copy()
-    
-    
+
+    # sort by epoch
+    between_epochs = between_epochs.sort_values(['Epoch1', 'Epoch2'])
+
     epochs = between_epochs['Epoch1'].values
     similarities = between_epochs['Similarity'].values
     
@@ -29,7 +31,10 @@ def plot_similarity_within_epochs():
     similarity_file = "SET-MLP-Keras-Weights-Mask/results/deltacon_similarity_binary.csv"
     df = pd.read_csv(similarity_file)
     within_epochs = df[df['Type'] == 'Within_Epoch'].copy()
-    
+
+    # sort by epoch
+    within_epochs = within_epochs.sort_values(['Epoch1', 'Epoch2'])
+
     epochs = within_epochs['Epoch1'].values
     similarities = within_epochs['Similarity'].values
     

@@ -80,40 +80,79 @@ def Partition2e(partitions, size):
 				e[p].append(0.0)
 	return e
 
+def InverseMatrix(A, partitions):
+	'''
+	use Fast Belief Propagatioin
+	CITATION: Danai Koutra, Tai-You Ke, U. Kang, Duen Horng Chau, Hsing-Kuo
+	Kenneth Pao, Christos Faloutsos
+	Unifying Guilt-by-Association Approaches
+	return [I+a*D-c*A]^-1
+	'''
+	num=len(partitions)		#the number of partition
 
-def InverseMatrix(A, e):
-    num = len(e) 
+	I=identity(A.shape[0])          #identity matirx
+	D=diags(sum(A).toarray(), [0])  #diagonal degree matrix
 
-    if A.nnz == 0:
-        MatrixR = np.array([e[i] for i in range(num)]).T
-        return csc_matrix(MatrixR)
+	c1=trace(D.toarray())+2
+	c2=trace(square(D).toarray())-1
+	h_h=sqrt((-c1+sqrt(c1*c1+4*c2))/(8*c2))
 
-    degrees = np.array(A.sum(axis=1)).flatten()
-    max_deg = np.max(degrees)
+	a=4*h_h*h_h/(1-4*h_h*h_h)
+	c=2*h_h/(1-4*h_h*h_h)
 
-    epsilon = 1.0 / (1.0 + max_deg)
+	#M=I-c*A+a*D
+	#S=inv(M.toarray())
 
-    # S = I + epsilon*A + epsilon^2*A^2 + ...
-    M = epsilon * A
+	M=c*A+a*D
+	for i in range(num):
+		inv=array([partitions[i][:]]).T
+		mat=array([partitions[i][:]]).T
+		power=1
+		while amax(M.toarray())>10**(-9) and power<10:
+			mat=M.dot(mat)
+			inv+=mat
+			power+=1
+		if i==0:
+			MatrixR=inv
+		else:
+			MatrixR=concatenate((MatrixR, array(inv)), axis=1)
 
-    MatrixR = None
-    for i in range(num):
-        target_vec = array([e[i][:]]).T
-        inv_vec = target_vec.copy()
-        mat = target_vec.copy()
+	S=csc_matrix(MatrixR)
+	return S
+
+# def InverseMatrix(A, e):
+#     num = len(e) 
+
+#     if A.nnz == 0:
+#         MatrixR = np.array([e[i] for i in range(num)]).T
+#         return csc_matrix(MatrixR)
+
+#     degrees = np.array(A.sum(axis=1)).flatten()
+#     max_deg = np.max(degrees)
+
+#     epsilon = 1.0 / (1.0 + max_deg)
+
+#     # S = I + epsilon*A + epsilon^2*A^2 + ...
+#     M = epsilon * A
+
+#     MatrixR = None
+#     for i in range(num):
+#         target_vec = array([e[i][:]]).T
+#         inv_vec = target_vec.copy()
+#         mat = target_vec.copy()
         
-        power = 1
-        while power < 10:  
-            mat = M.dot(mat)
-            inv_vec += mat
-            power += 1
+#         power = 1
+#         while power < 10:  
+#             mat = M.dot(mat)
+#             inv_vec += mat
+#             power += 1
             
-        if MatrixR is None:
-            MatrixR = inv_vec
-        else:
-            MatrixR = concatenate((MatrixR, inv_vec), axis=1)
+#         if MatrixR is None:
+#             MatrixR = inv_vec
+#         else:
+#             MatrixR = concatenate((MatrixR, inv_vec), axis=1)
 
-    return csc_matrix(MatrixR)
+#     return csc_matrix(MatrixR)
 
 def Similarity(A1, A2, g):
 	'''
@@ -139,7 +178,7 @@ def Similarity(A1, A2, g):
 
 def DeltaCon(A1, A2, g):
 	#compute average sim
-	Iteration=10
+	Iteration=1
 	average=0.0
 	for i in range(Iteration):
 		average+=Similarity(A1, A2, g)

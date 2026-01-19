@@ -4,6 +4,7 @@ import sys
 import pandas as pd
 from scipy.sparse import load_npz
 import time
+from multiprocessing import Pool, cpu_count
 
 # Import DeltaCon functions
 # Add parent directory to path to import deltaCon module
@@ -14,6 +15,15 @@ if deltacon_path not in sys.path:
     sys.path.insert(0, deltacon_path)
 
 from deltaCon import DeltaCon, load_adjacency_from_npz
+
+
+def _similarity_task(args):
+    """
+    Helper function for parallel similarity computation.
+    """
+    file1, file2, g, matrix_type, epoch1_num, epoch2_num = args
+    sim = compute_similarity(file1, file2, g, matrix_type)
+    return epoch1_num, epoch2_num, sim
 
 def get_epoch_dirs(base_dir):
     """
@@ -85,33 +95,43 @@ def analyze_epoch_similarities(base_dir, output_file, g=5, n=1, matrix_type='bin
     
     results = []
     
-    # Compute similarities between epoch and next n epoch (after_training)
+    # Build tasks for similarities between epoch and next n epoch (after_training)
     print("\nComputing similarities between epochs (after_training)")
+    tasks = []
     for i in range(len(epoch_dirs) - n):
         epoch1 = epoch_dirs[i]
         epoch2 = epoch_dirs[i + n]
         epoch1_num = int(epoch1.split('_')[1])
         epoch2_num = int(epoch2.split('_')[1])
-        
+
         file1 = os.path.join(base_dir, epoch1, f'after_training_{matrix_type}.npz')
         file2 = os.path.join(base_dir, epoch2, f'after_training_{matrix_type}.npz')
-        
-        print(f"  Computing: Epoch {epoch1_num} -> Epoch {epoch2_num}", end=' ')
-        sim = compute_similarity(file1, file2, g, matrix_type)
-        
-        if sim is not None:
-            results.append({
-                'Type': 'Between_Epochs',
-                'Epoch1': epoch1_num,
-                'Epoch2': epoch2_num,
-                'Stage1': 'after_training',
-                'Stage2': 'after_training',
-                'Similarity': sim,
-                'Matrix_Type': matrix_type
-            })
-            print(f"Similarity: {sim:.6f}")
-        else:
-            print("Failed")
+
+        tasks.append((file1, file2, g, matrix_type, epoch1_num, epoch2_num))
+
+    if not tasks:
+        print("No epoch pairs to compare.")
+        return
+
+    num_workers = min(cpu_count(), len(tasks))
+    print(f"Using {num_workers} parallel workers")
+
+    with Pool(processes=num_workers) as pool:
+        for epoch1_num, epoch2_num, sim in pool.imap_unordered(_similarity_task, tasks):
+            print(f"  Computing: Epoch {epoch1_num} -> Epoch {epoch2_num}", end=' ')
+            if sim is not None:
+                results.append({
+                    'Type': 'Between_Epochs',
+                    'Epoch1': epoch1_num,
+                    'Epoch2': epoch2_num,
+                    'Stage1': 'after_training',
+                    'Stage2': 'after_training',
+                    'Similarity': sim,
+                    'Matrix_Type': matrix_type
+                })
+                print(f"Similarity: {sim:.6f}")
+            else:
+                print("Failed")
     
     # # 2. Compute similarities within each epoch (after_training vs after_pruning)
     # print("\n2. Computing similarities within epochs (after_training vs after_pruning) ")

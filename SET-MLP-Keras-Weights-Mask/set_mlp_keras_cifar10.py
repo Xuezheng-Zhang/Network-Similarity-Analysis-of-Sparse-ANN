@@ -5,6 +5,7 @@ from __future__ import division
 from __future__ import print_function
 import numpy as np
 import os
+from scipy.sparse import csr_matrix, save_npz, load_npz
 
 try:
     from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -177,13 +178,15 @@ class SET_MLP_CIFAR10:
         
         # save weights
         for layer_name, weight_matrix in weights.items():
-            filename = os.path.join(epoch_dir, f"weight_{layer_name}.npy")
-            np.save(filename, weight_matrix)
+            filename = os.path.join(epoch_dir, f"weight_{layer_name}.npz")
+            sparse_weight = csr_matrix(weight_matrix)
+            save_npz(filename, sparse_weight)
         
         # save masks
         for layer_name, mask_matrix in masks.items():
-            filename = os.path.join(epoch_dir, f"mask_{layer_name}.npy")
-            np.save(filename, mask_matrix)
+            filename = os.path.join(epoch_dir, f"mask_{layer_name}.npz")
+            sparse_mask = csr_matrix(mask_matrix)
+            save_npz(filename, sparse_mask)
         
         sparsity = self.calculate_sparsity(masks)
         print(f"  Saved weights and masks to {epoch_dir}")

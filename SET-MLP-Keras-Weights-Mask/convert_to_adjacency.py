@@ -1,7 +1,7 @@
 import numpy as np
 import os
 import sys
-from scipy.sparse import csr_matrix, save_npz
+from scipy.sparse import csr_matrix, save_npz, load_npz
 
 def load_weights_from_directory(stage_dir):
     """
@@ -9,11 +9,13 @@ def load_weights_from_directory(stage_dir):
     """
     weights = {}
     for layer in [1, 2, 3, 4]:
-        weight_file = os.path.join(stage_dir, f"weight_layer_{layer}.npy")
-        if os.path.exists(weight_file):
-            weights[f'layer_{layer}'] = np.load(weight_file)
+        weight_file_npz = os.path.join(stage_dir, f"weight_layer_{layer}.npz")
+        
+        if os.path.exists(weight_file_npz):
+            sparse_weight = load_npz(weight_file_npz)
+            weights[f'layer_{layer}'] = sparse_weight.toarray()
         else:
-            print(f"Weight file not found: {weight_file}")
+            print(f"Weight file not found: {weight_file_npz}")
     return weights
 
 def calculate_layer_sizes(weights_dict):
@@ -137,6 +139,13 @@ def convert_epoch_stage(epoch_dir, stage, output_base_dir, binary=False):
     
     # Load weights
     weights_dict = load_weights_from_directory(stage_dir)
+
+    # If any of the required layers is missing, skip this stage
+    required_layers = ['layer_1', 'layer_2', 'layer_3', 'layer_4']
+    missing_layers = [k for k in required_layers if k not in weights_dict]
+    if missing_layers:
+        print(f"Skipping {stage_dir}: missing weights for {missing_layers}")
+        return False
     
     # Build adjacency matrix
     adj_matrix = build_adjacency_matrix(weights_dict, binary=binary)

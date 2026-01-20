@@ -63,7 +63,7 @@ class SET_MLP_CIFAR10:
         self.epsilon = 20 
         self.zeta = 0.3 
         self.batch_size = 100 
-        self.maxepoches = 10 
+        self.maxepoches = 100
         self.learning_rate = 0.01 
         self.num_classes = 10 
         self.momentum = 0.9 

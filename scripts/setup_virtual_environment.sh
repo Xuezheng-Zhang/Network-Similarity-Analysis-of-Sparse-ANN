@@ -42,7 +42,7 @@ python3 -m pip install --user virtualenv
 source "$VENV_DIR"/bin/activate
 python3 -m pip install --upgrade pip
 python3 -m pip install -r "$PROJECT_DIR"/requirements.txt
-python3 -m pip install -e "$PROJECT_DIR"
+# python3 -m pip install -e "$PROJECT_DIR"
 
 
 

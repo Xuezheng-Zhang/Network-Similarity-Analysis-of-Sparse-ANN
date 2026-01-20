@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH --partition=csedu
-#SBATCH --account=cseduproject # or your course code
+#SBATCH --account=csedui00041 # or your course code
 #SBATCH --gres=gpu:1
 #SBATCH --mem=10G
 #SBATCH --cpus-per-task=1

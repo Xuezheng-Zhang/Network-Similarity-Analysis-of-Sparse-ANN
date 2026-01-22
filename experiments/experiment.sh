@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH --partition=csedu
-#SBATCH --account=jupyterhub # or your course code
+#SBATCH --account=cseduprojetc 
 #SBATCH --gres=gpu:1
 #SBATCH --mem=10G
 #SBATCH --cpus-per-task=1

@@ -10,5 +10,5 @@
 #SBATCH --mail-user=xuezheng.zhang@ru.nl
 
 project_dir=.
-source "$project_dir"/venv/bin/activate
+source "/scratch/xzhang/virtual_environments/bin/activate"
 python3 "$project_dir"/SET-MLP-Keras-Weights-Mask/set_mlp_keras_cifar10.py

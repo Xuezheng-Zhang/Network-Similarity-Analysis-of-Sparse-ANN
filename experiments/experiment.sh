@@ -9,6 +9,9 @@
 #SBATCH --error=./logs/experiment1_%j.err
 #SBATCH --mail-user=xuezheng.zhang@ru.nl
 
-project_dir=.
-source "/scratch/xzhang/virtual_environments/bin/activate"
-python3 "$project_dir"/SET-MLP-Keras-Weights-Mask/set_mlp_keras_cifar10.py
+
+VENV_PATH="/scratch/xzhang/virtual_environments/bin/activate"
+PROJECT_DIR="/home/xzhang/intern/Network-Similarity-Analysis-of-Sparse-ANN"
+
+source "$VENV_PATH"
+python3 "$PROJECT_DIR/SET-MLP-Keras-Weights-Mask/set_mlp_keras_cifar10.py"

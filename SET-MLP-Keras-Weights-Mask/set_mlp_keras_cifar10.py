@@ -3,6 +3,7 @@ USE THIS MODEL AS A BASELINE
 """
 from __future__ import division
 from __future__ import print_function
+import json
 import numpy as np
 import os
 from scipy.sparse import csr_matrix, save_npz, load_npz
@@ -61,12 +62,13 @@ def createWeightsMask(epsilon, noRows, noCols):
     return [noParameters, mask_weights]
 
 class SET_MLP_CIFAR10:
-    def __init__(self):
+    def __init__(self, run_id=0):
+        self.run_id = run_id
         self.epsilon = 20 
         self.zeta = 0.3 
         self.batch_size = 100 
-        self.maxepoches = 100
-        self.learning_rate = 1e-4
+        self.maxepoches = 200
+        self.learning_rate = 2e-4
         self.weight_decay = 1e-4  
         self.num_classes = 10 
         self.momentum = 0.9 
@@ -213,38 +215,41 @@ class SET_MLP_CIFAR10:
     def append_training_metadata(self, metadata_file, epoch, sparsity_after_training, 
                                  sparsity_after_pruning, val_accuracy, val_loss):
         """
-        output training metadata to a file
+        append training metadata
         """
+        def to_float(d):
+            return {k: float(v) for k, v in d.items()}
+
+        record = {
+            "epoch": int(epoch),
+            "val_accuracy": float(val_accuracy),
+            "val_loss": float(val_loss),
+            "sparsity_after_training": to_float(sparsity_after_training),
+            "sparsity_after_pruning": to_float(sparsity_after_pruning),
+        }
+
         if not os.path.exists(metadata_file):
-            with open(metadata_file, 'w') as f:
-                f.write("Epoch\tVal_Accuracy\tVal_Loss\t")
-                f.write("Sparsity_After_Training_L1\tSparsity_After_Training_L2\tSparsity_After_Training_L3\t")
-                f.write("Sparsity_After_Pruning_L1\tSparsity_After_Pruning_L2\tSparsity_After_Pruning_L3\n")
-        
-        # write training metadata
-        with open(metadata_file, 'a') as f:
-            f.write(f"{epoch}\t{val_accuracy:.6f}\t{val_loss:.6f}\t")
-            f.write(f"{sparsity_after_training['layer_1']:.6f}\t")
-            f.write(f"{sparsity_after_training['layer_2']:.6f}\t")
-            f.write(f"{sparsity_after_training['layer_3']:.6f}\t")
-            f.write(f"{sparsity_after_pruning['layer_1']:.6f}\t")
-            f.write(f"{sparsity_after_pruning['layer_2']:.6f}\t")
-            f.write(f"{sparsity_after_pruning['layer_3']:.6f}\n")
+            records = []
+        else:
+            with open(metadata_file, 'r') as f:
+                records = json.load(f)
+        records.append(record)
+        with open(metadata_file, 'w') as f:
+            json.dump(records, f, indent=2)
 
     def train(self):
         [x_train, x_test, y_train, y_test] = self.read_data()
         datagen = ImageDataGenerator(rotation_range=10, width_shift_range=0.1, height_shift_range=0.1)
         
-        snapshot_dir = "./SET-MLP-Keras-Weights-Mask/results/graph_snapshots"
-        if not os.path.exists(snapshot_dir):
-            os.makedirs(snapshot_dir)
-            print(f"Created snapshot directory: {snapshot_dir}")
+        snapshot_dir = os.path.join("./SET-MLP-Keras-Weights-Mask/results/graph_snapshots", f"run_{self.run_id}")
+        os.makedirs(snapshot_dir, exist_ok=True)
+        print(f"Run {self.run_id}: snapshot dir {snapshot_dir}")
         
-        metadata_file = "SET-MLP-Keras-Weights-Mask/results/training_metadata.txt"
+        metadata_file = os.path.join("SET-MLP-Keras-Weights-Mask/results", f"training_metadata_run_{self.run_id}.json")
         
         self.accuracies_per_epoch = []
         for epoch in range(self.maxepoches):
-            print(f"\nEpoch {epoch+1}/{self.maxepoches}")
+            print(f"\nRun {self.run_id} | Epoch {epoch+1}/{self.maxepoches}")
             
             try:
                 sgd = optimizers.SGD(learning_rate=self.learning_rate, momentum=self.momentum)
@@ -325,6 +330,11 @@ class SET_MLP_CIFAR10:
 
         return [x_train, x_test, y_train, y_test]
 
+NUM_RUNS = 5
+
 if __name__ == '__main__':
-    if not os.path.exists('SET-MLP-Keras-Weights-Mask/results'): os.makedirs('SET-MLP-Keras-Weights-Mask/results')
-    model = SET_MLP_CIFAR10()
+    os.makedirs('SET-MLP-Keras-Weights-Mask/results', exist_ok=True)
+    for run_id in range(NUM_RUNS):
+        print(f"Training model run {run_id + 1}/{NUM_RUNS} ...\n")
+        model = SET_MLP_CIFAR10(run_id=run_id)
+    print(f"\nDone. {NUM_RUNS} models saved to graph_snapshots/run_0..run_{NUM_RUNS-1} and training_metadata_run_0..run_{NUM_RUNS-1}.json")

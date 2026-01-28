@@ -12,16 +12,18 @@ try:
     from tensorflow.keras.models import Sequential
     from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten, ReLU
     from tensorflow.keras import optimizers, backend as K
-    from tensorflow.keras.datasets import cifar10
+    from tensorflow.keras.datasets import mnist
     from tensorflow.keras.utils import to_categorical
     from tensorflow.keras.constraints import Constraint
+    from tensorflow.keras.regularizers import l2
 except ImportError:
     from keras.preprocessing.image import ImageDataGenerator
     from keras.models import Sequential
     from keras.layers import Dense, Dropout, Activation, Flatten, ReLU
     from keras import optimizers, backend as K
-    from keras.datasets import cifar10
+    from keras.datasets import mnist
     from keras.utils import to_categorical
+    from keras.regularizers import l2
     try:
         from keras.constraints import Constraint
     except ImportError:
@@ -63,15 +65,16 @@ class SET_MLP_CIFAR10:
         self.epsilon = 20 
         self.zeta = 0.3 
         self.batch_size = 100 
-        self.maxepoches = 500
-        self.learning_rate = 0.01 
+        self.maxepoches = 100
+        self.learning_rate = 1e-4
+        self.weight_decay = 1e-4  
         self.num_classes = 10 
         self.momentum = 0.9 
 
-        # initialize masks
-        [self.noPar1, self.wm1] = createWeightsMask(self.epsilon, 3072, 4000)
-        [self.noPar2, self.wm2] = createWeightsMask(self.epsilon, 4000, 1000)
-        [self.noPar3, self.wm3] = createWeightsMask(self.epsilon, 1000, 4000)
+        # 784 -> 512 -> 256 -> 128 -> 10
+        [self.noPar1, self.wm1] = createWeightsMask(self.epsilon, 784, 512)   
+        [self.noPar2, self.wm2] = createWeightsMask(self.epsilon, 512, 256)  
+        [self.noPar3, self.wm3] = createWeightsMask(self.epsilon, 256, 128)   
 
         self.w1, self.w2, self.w3, self.w4 = None, None, None, None
         
@@ -81,27 +84,23 @@ class SET_MLP_CIFAR10:
     def create_model(self):
         # if there is any weights data, model weights will be set when training
 
-        # input layer
         self.model = Sequential()
-        self.model.add(Flatten(input_shape=(32, 32, 3)))
-        
-        # first hidden layer
-        self.model.add(Dense(4000, name="sparse_1", kernel_constraint=MaskWeights(self.wm1), use_bias=True))
+        self.model.add(Flatten(input_shape=(28, 28, 1)))
+         
+        reg = l2(self.weight_decay)
+        self.model.add(Dense(512, name="sparse_1", kernel_constraint=MaskWeights(self.wm1), kernel_regularizer=reg, use_bias=True))
         self.model.add(ReLU(name="srelu1"))
         self.model.add(Dropout(0.3))
         
-        # second hidden layer
-        self.model.add(Dense(1000, name="sparse_2", kernel_constraint=MaskWeights(self.wm2), use_bias=True))
+        self.model.add(Dense(256, name="sparse_2", kernel_constraint=MaskWeights(self.wm2), kernel_regularizer=reg, use_bias=True))
         self.model.add(ReLU(name="srelu2"))
         self.model.add(Dropout(0.3))
         
-        # third hidden layer
-        self.model.add(Dense(4000, name="sparse_3", kernel_constraint=MaskWeights(self.wm3), use_bias=True))
+        self.model.add(Dense(128, name="sparse_3", kernel_constraint=MaskWeights(self.wm3), kernel_regularizer=reg, use_bias=True))
         self.model.add(ReLU(name="srelu3"))
         self.model.add(Dropout(0.3))
         
-        # output layer
-        self.model.add(Dense(self.num_classes, name="dense_4", use_bias=True))
+        self.model.add(Dense(self.num_classes, name="dense_4", kernel_regularizer=reg, use_bias=True))
         self.model.add(Activation('softmax'))
         
     def rewireMask(self, weights, noWeights):
@@ -135,16 +134,16 @@ class SET_MLP_CIFAR10:
         extract the weights and masks from the current model
         """
         weights = {
-            'layer_1': np.array(self.model.get_layer("sparse_1").get_weights()[0]),  # (3072, 4000)
-            'layer_2': np.array(self.model.get_layer("sparse_2").get_weights()[0]),  # (4000, 1000)
-            'layer_3': np.array(self.model.get_layer("sparse_3").get_weights()[0]),  # (1000, 4000)
-            'layer_4': np.array(self.model.get_layer("dense_4").get_weights()[0])    # (4000, 10)
+            'layer_1': np.array(self.model.get_layer("sparse_1").get_weights()[0]),  # (784, 512)
+            'layer_2': np.array(self.model.get_layer("sparse_2").get_weights()[0]),  # (512, 256)
+            'layer_3': np.array(self.model.get_layer("sparse_3").get_weights()[0]),  # (256, 128)
+            'layer_4': np.array(self.model.get_layer("dense_4").get_weights()[0])    # (128, 10)
         }
         
         masks = {
-            'layer_1': np.array(self.wm1),  # (3072, 4000)
-            'layer_2': np.array(self.wm2),  # (4000, 1000)
-            'layer_3': np.array(self.wm3)   # (1000, 4000)
+            'layer_1': np.array(self.wm1),  # (784, 512)
+            'layer_2': np.array(self.wm2),  # (512, 256)
+            'layer_3': np.array(self.wm3)   # (256, 128)
         }
         
         return weights, masks
@@ -197,13 +196,11 @@ class SET_MLP_CIFAR10:
         """
         evolve the weights
         """
-        
         self.w1 = self.model.get_layer("sparse_1").get_weights()
         self.w2 = self.model.get_layer("sparse_2").get_weights()
         self.w3 = self.model.get_layer("sparse_3").get_weights()
         self.w4 = self.model.get_layer("dense_4").get_weights()
 
-        # update the masks
         [self.wm1, core1] = self.rewireMask(self.w1[0], self.noPar1)
         [self.wm2, core2] = self.rewireMask(self.w2[0], self.noPar2)
         [self.wm3, core3] = self.rewireMask(self.w3[0], self.noPar3)
@@ -236,7 +233,7 @@ class SET_MLP_CIFAR10:
 
     def train(self):
         [x_train, x_test, y_train, y_test] = self.read_data()
-        datagen = ImageDataGenerator(rotation_range=10, width_shift_range=0.1, height_shift_range=0.1, horizontal_flip=True)
+        datagen = ImageDataGenerator(rotation_range=10, width_shift_range=0.1, height_shift_range=0.1)
         
         snapshot_dir = "./SET-MLP-Keras-Weights-Mask/results/graph_snapshots"
         if not os.path.exists(snapshot_dir):
@@ -249,7 +246,6 @@ class SET_MLP_CIFAR10:
         for epoch in range(self.maxepoches):
             print(f"\nEpoch {epoch+1}/{self.maxepoches}")
             
-            # compile the model
             try:
                 sgd = optimizers.SGD(learning_rate=self.learning_rate, momentum=self.momentum)
             except TypeError:
@@ -313,18 +309,19 @@ class SET_MLP_CIFAR10:
                                          sparsity_after_pruning, val_accuracy, val_loss)
 
     def read_data(self):
-        #read CIFAR10 data
-        (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+        (x_train, y_train), (x_test, y_test) = mnist.load_data()
+        x_train = np.expand_dims(x_train, axis=-1)
+        x_test = np.expand_dims(x_test, axis=-1)
         y_train = to_categorical(y_train, self.num_classes)
         y_test = to_categorical(y_test, self.num_classes)
         x_train = x_train.astype('float32')
         x_test = x_test.astype('float32')
 
-        #normalize data
         xTrainMean = np.mean(x_train, axis=0)
-        xTtrainStd = np.std(x_train, axis=0)
-        x_train = (x_train - xTrainMean) / xTtrainStd
-        x_test = (x_test - xTrainMean) / xTtrainStd
+        xTrainStd = np.std(x_train, axis=0)
+        xTrainStd = np.where(xTrainStd < 1e-7, 1.0, xTrainStd)
+        x_train = (x_train - xTrainMean) / xTrainStd
+        x_test = (x_test - xTrainMean) / xTrainStd
 
         return [x_train, x_test, y_train, y_test]
 

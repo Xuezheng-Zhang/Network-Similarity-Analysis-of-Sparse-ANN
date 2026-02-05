@@ -98,7 +98,7 @@ class SET_RBM:
         tqdm.write(f"  Saved snapshot to {epoch_dir} (sparsity: {sparsity*100:.2f}%)")
         return {"layer_1": sparsity}
 
-    def fit(self, X_train, X_test, batch_size, epochs, lengthMarkovChain=2, weight_decay=0.0000002, learning_rate=0.1, zeta=0.3, testing=True, save_filename="", save_snapshots=True):
+    def fit(self, X_train, X_test, batch_size, epochs, lengthMarkovChain=2, weight_decay=0.0000002, learning_rate=0.1, zeta=0.3, testing=True, save_filename="", save_snapshots=True, y_train=None, y_test=None):
 
         self.lengthMarkovChain = lengthMarkovChain
         self.weight_decay = weight_decay
@@ -134,17 +134,27 @@ class SET_RBM:
 
             reconstruction_error_train = reconstruction_error_train / n_batches
             metrics[i, 0] = reconstruction_error_train
-            tqdm.write(f"\nSET-RBM Epoch {i}")
-            tqdm.write(f"Training time: {t2 - t1}; Reconstruction error train: {reconstruction_error_train}")
 
+            reconstruction_error_test = None
+            val_accuracy = None
             if testing:
                 t3 = datetime.datetime.now()
                 reconstruction_error_test = self.reconstruct(X_test)
                 t4 = datetime.datetime.now()
                 metrics[i, 1] = reconstruction_error_test
                 minimum_reconstructin_error = min(minimum_reconstructin_error, reconstruction_error_test)
-                tqdm.write(f"Testing time: {t4 - t3}; Reconstruction error test: {reconstruction_error_test}; "
-                           f"Minimum: {minimum_reconstructin_error}")
+                if y_train is not None and y_test is not None:
+                    val_accuracy = eval_accuracy_on_hidden(self, X_train, y_train, X_test, y_test)
+
+            tqdm.write(f"\nRun {self.run_id} | Epoch {i+1}/{epochs}")
+            parts = []
+            if val_accuracy is not None:
+                parts.append(f"Val Accuracy: {val_accuracy:.4f} ({val_accuracy*100:.2f}%)")
+            if reconstruction_error_test is not None:
+                parts.append(f"Reconstruction Error (val): {reconstruction_error_test:.4f}")
+            if parts:
+                tqdm.write(", ".join(parts))
+            tqdm.write(f"Reconstruction Error (train): {reconstruction_error_train:.4f}")
 
             # save snapshot after training
             sparsity_after_training = None
@@ -173,7 +183,9 @@ class SET_RBM:
                 rec = {
                     "epoch": int(i),
                     "reconstruction_error_train": float(metrics[i, 0]),
-                    "reconstruction_error_test": float(metrics[i, 1]),
+                    "reconstruction_error_test": float(metrics[i, 1]) if reconstruction_error_test is not None else None,
+                    "val_accuracy": float(val_accuracy) if val_accuracy is not None else None,
+                    "val_loss": float(metrics[i, 1]) if reconstruction_error_test is not None else None,  # RBM: reconstruction error
                     "sparsity_after_training": {k: float(v) for k, v in sparsity_after_training.items()},
                     "sparsity_after_pruning": {k: float(v) for k, v in (sparsity_after_pruning or sparsity_after_training).items()},
                 }
@@ -267,12 +279,30 @@ class SET_RBM:
         self.bV=self.bV+self.learning_rate*(np.mean(self.DV,axis=0)-np.mean(self.MV,axis=0))-self.weight_decay*self.bV
         self.bH = self.bH + self.learning_rate * (np.mean(self.DH, axis=0) - np.mean(self.MH, axis=0)) - self.weight_decay * self.bH
 
-def load_mnist():
+def load_mnist(return_labels=False):
     """Load MNIST dataset, normalized to [0, 1] for RBM."""
-    (x_train, _), (x_test, _) = mnist.load_data()
+    (x_train, y_train), (x_test, y_test) = mnist.load_data()
     x_train = x_train.reshape(x_train.shape[0], -1).astype('float64') / 255.0
     x_test = x_test.reshape(x_test.shape[0], -1).astype('float64') / 255.0
+    if return_labels:
+        return x_train, x_test, y_train, y_test
     return x_train, x_test
+
+
+def eval_accuracy_on_hidden(rbm, X_train, y_train, X_test, y_test):
+    """
+    Evaluate classification accuracy using hidden representations + logistic regression.
+    Returns val_accuracy in [0, 1].
+    """
+    try:
+        from sklearn.linear_model import LogisticRegression
+    except ImportError:
+        return None
+    h_train = rbm.getHiddenNeurons(X_train)
+    h_test = rbm.getHiddenNeurons(X_test)
+    clf = LogisticRegression(max_iter=200, solver='lbfgs')
+    clf.fit(h_train, y_train)
+    return clf.score(h_test, y_test)
 
 
 NUM_RUNS = 1
@@ -284,7 +314,7 @@ BATCH_SIZE = 256
 if __name__ == "__main__":
     np.random.seed(0)
 
-    x_train, x_test = load_mnist()
+    x_train, x_test, y_train, y_test = load_mnist(return_labels=True)
     no_visible = x_train.shape[1]  # 784 for MNIST
 
     os.makedirs(RESULTS_DIR, exist_ok=True)
@@ -304,6 +334,7 @@ if __name__ == "__main__":
             testing=True,
             save_filename=os.path.join(RESULTS_DIR, f"set_rbm_run_{run_id}.txt"),
             save_snapshots=True,
+            y_train=y_train, y_test=y_test,
         )
 
         reconstructions = setrbm.getRecontructedVisibleNeurons(x_test)

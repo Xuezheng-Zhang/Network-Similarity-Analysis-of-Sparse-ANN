@@ -64,7 +64,7 @@ def createWeightsMask(epsilon, noRows, noCols):
 class SET_MLP_CIFAR10:
     def __init__(self, run_id=0):
         self.run_id = run_id
-        self.epsilon = 20 
+        self.epsilon = 69
         self.zeta = 0.3 
         self.batch_size = 100 
         self.maxepoches = 200
@@ -330,7 +330,7 @@ class SET_MLP_CIFAR10:
 
         return [x_train, x_test, y_train, y_test]
 
-NUM_RUNS = 5
+NUM_RUNS = 1
 
 if __name__ == '__main__':
     os.makedirs('SET-MLP-Keras-Weights-Mask/results', exist_ok=True)

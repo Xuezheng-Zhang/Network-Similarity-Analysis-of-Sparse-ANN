@@ -30,7 +30,7 @@ def load_val_accuracy_data():
     return {}
 
 def aggregate_similarity_mean(df):
-    """Group by (Epoch1, Epoch2, n), average Similarity over 5 runs. Return aggregated df."""
+    """Group by (Epoch1, Epoch2, n), average Similarity over n runs."""
     between = df[df["Type"] == "Between_Epochs"].copy()
     if between.empty:
         return between

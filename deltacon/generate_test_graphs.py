@@ -1,6 +1,7 @@
 import numpy as np
 import os
 from scipy.sparse import csr_matrix, save_npz
+from scipy.sparse import random
 
 def create_erdos_renyi_graph(n_nodes, p, seed=None):
     """
@@ -145,6 +146,18 @@ def create_null_graph(n_nodes):
     adj = csr_matrix((data, (rows, cols)), shape=(n_nodes, n_nodes), dtype=np.float32)
     return adj
 
+def create_random_sparse_graph(n_nodes, sparsity, seed=None):
+    density = 1 - sparsity
+    adj = random(n_nodes, n_nodes, density=density, format='csr', random_state=seed, dtype=np.float32)
+    
+    adj.data[:] = 1.0
+    
+    # remove self-loops
+    adj.setdiag(0)
+    adj.eliminate_zeros()
+    
+    return adj
+
 def main():
     # Create test_graphs directory
     output_dir = "deltacon/test_graphs"
@@ -193,11 +206,19 @@ def main():
     print(f"  Created: test_erdos_8_0.5.npz (shape: {adj8.shape}, edges: {adj8.nnz})")
 
     # Test 9: Null graph (10 nodes)
-    adj9 = create_null_graph(10)
+    adj9 = create_null_graph(1000)
     save_npz(os.path.join(output_dir, "test_null_10.npz"), adj9)
     print(f"  Created: test_null_10.npz (shape: {adj9.shape}, edges: {adj9.nnz})")
-    print(f"\nAll test graphs saved to: {output_dir}/")
-    print(f"Total graphs generated: 8")
+    
+    # Test 10: Random sparse graph matching network structure
+    # Nodes: 3072 + 4000 + 1000 + 4000 + 10 = 12082
+    # Sparsity: 98%
+    n_nodes_network = 784 + 512 + 256 + 128 + 10
+    sparsity_target = 0.93
+    adj10 = create_random_sparse_graph(n_nodes_network, sparsity_target, seed=42)
+    output_file = os.path.join(output_dir, f"random_sparse_{n_nodes_network}_sparsity_{sparsity_target:.4f}.npz")
+    save_npz(output_file, adj10)
+    print(f"  Created: {os.path.basename(output_file)}")
 
 if __name__ == '__main__':
     main()

@@ -148,14 +148,26 @@ def create_null_graph(n_nodes):
 
 def create_random_sparse_graph(n_nodes, sparsity, seed=None):
     density = 1 - sparsity
-    adj = random(n_nodes, n_nodes, density=density, format='csr', random_state=seed, dtype=np.float32)
-    
-    adj.data[:] = 1.0
-    
+    rng = np.random.RandomState(seed)
+
+    # Generate random structure
+    adj = random(
+        n_nodes,
+        n_nodes,
+        density=density,
+        format='csr',
+        random_state=rng,
+        dtype=np.float32,
+    )
+
+    # Assign mixed-sign weights ~ N(0, 1)
+    if adj.nnz > 0:
+        adj.data = rng.randn(adj.nnz).astype(np.float32)
+
     # remove self-loops
     adj.setdiag(0)
     adj.eliminate_zeros()
-    
+
     return adj
 
 def main():
@@ -211,10 +223,10 @@ def main():
     print(f"  Created: test_null_10.npz (shape: {adj9.shape}, edges: {adj9.nnz})")
     
     # Test 10: Random sparse graph matching network structure
-    # Nodes: 3072 + 4000 + 1000 + 4000 + 10 = 12082
-    # Sparsity: 98%
+    # Nodes: 784 + 512 + 256 + 128 + 10 = 1690
+    # Sparsity: 80%
     n_nodes_network = 784 + 512 + 256 + 128 + 10
-    sparsity_target = 0.93
+    sparsity_target = 0.999
     adj10 = create_random_sparse_graph(n_nodes_network, sparsity_target, seed=42)
     output_file = os.path.join(output_dir, f"random_sparse_{n_nodes_network}_sparsity_{sparsity_target:.4f}.npz")
     save_npz(output_file, adj10)

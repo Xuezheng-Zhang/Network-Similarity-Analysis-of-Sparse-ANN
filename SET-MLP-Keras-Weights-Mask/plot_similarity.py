@@ -9,7 +9,6 @@ import numpy as np
 RESULTS_DIR = "SET-MLP-Keras-Weights-Mask/results"
 
 def load_val_accuracy_data():
-    """Load val accuracy; prefer mean over 5 runs"""
     pat = os.path.join(RESULTS_DIR, "training_metadata_run_*.json")
     files = sorted(glob.glob(pat))
     if files:

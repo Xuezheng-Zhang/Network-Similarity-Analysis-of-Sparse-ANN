@@ -2,7 +2,7 @@ import numpy as np
 import os
 import sys
 import pandas as pd
-from scipy.sparse import load_npz
+from scipy.sparse import load_npz, csr_matrix, coo_matrix, save_npz
 import time
 from multiprocessing import Pool, cpu_count
 
@@ -24,6 +24,15 @@ def _random_similarity_task(args):
     """
     epoch_file, random_graph_file, g, matrix_type, epoch_num = args
     sim = compute_similarity(epoch_file, random_graph_file, g, matrix_type)
+    return epoch_num, sim
+
+
+def _random_similarity_dual_task(args):
+    """
+    Helper function for parallel dual-channel similarity computation with random graph.
+    """
+    epoch_pos, random_pos, epoch_neg, random_neg, g, epoch_num = args
+    sim = compute_similarity_dual(epoch_pos, random_pos, epoch_neg, random_neg, g)
     return epoch_num, sim
 
 def _random_jaccard_similarity_task(args):
@@ -75,12 +84,38 @@ def compute_similarity(file1, file2, g=5, matrix_type='binary'):
         if A1.shape[0] != A2.shape[0]:
             print(f"Matrices do not have different sizes: {A1.shape[0]} vs {A2.shape[0]}")
             return None
+
+        # Binary mode: binarize both graphs (edge exists -> 1, no edge -> 0)
+        if matrix_type == 'binary':
+            if A1.nnz > 0:
+                A1.data[:] = 1.0
+            if A2.nnz > 0:
+                A2.data[:] = 1.0
+
+        # Weighted mode: use absolute values (in case of negative weights)
+        if matrix_type == 'weighted':
+            if A1.nnz > 0:
+                A1.data = np.abs(A1.data)
+            if A2.nnz > 0:
+                A2.data = np.abs(A2.data)
         
         sim = DeltaCon(A1, A2, g)
         return sim
     except Exception as e:
         print(f"Error computing similarity between {file1} and {file2}: {e}")
         return None
+
+
+def compute_similarity_dual(file1_pos, file2_pos, file1_neg, file2_neg, g=5):
+    """
+    Compute DeltaCon similarity for dual-channel (positive + negative) graphs.
+    Uses 0.5 * sim(positive) + 0.5 * sim(negative).
+    """
+    sim_pos = compute_similarity(file1_pos, file2_pos, g=g, matrix_type='weighted')
+    sim_neg = compute_similarity(file1_neg, file2_neg, g=g, matrix_type='weighted')
+    if sim_pos is None or sim_neg is None:
+        return None
+    return 0.5 * sim_pos + 0.5 * sim_neg
 
 def compute_jaccard_similarity(file1, file2, matrix_type='binary'):
     """
@@ -115,6 +150,42 @@ def compute_jaccard_similarity(file1, file2, matrix_type='binary'):
         return None
 
 
+def _ensure_random_dual_graph(random_graph_file):
+    """
+    Given a single weighted random graph, create positive/negative split NPZs if needed.
+    Returns (random_pos_file, random_neg_file).
+    """
+    base, ext = os.path.splitext(random_graph_file)
+    random_pos_file = base + "_positive.npz"
+    random_neg_file = base + "_negative.npz"
+
+    if os.path.exists(random_pos_file) and os.path.exists(random_neg_file):
+        return random_pos_file, random_neg_file
+
+    # Load as sparse adjacency
+    A = load_adjacency_from_npz(random_graph_file, make_undirected=False, remove_self_loops=True)
+    A_coo = coo_matrix(A)
+    data = A_coo.data
+    rows = A_coo.row
+    cols = A_coo.col
+
+    pos_mask = data > 0
+    neg_mask = data < 0
+
+    if not np.any(pos_mask) and not np.any(neg_mask):
+        # No sign information; treat all as positive
+        pos_mask = np.ones_like(data, dtype=bool)
+
+    A_pos = csr_matrix((data[pos_mask], (rows[pos_mask], cols[pos_mask])), shape=A_coo.shape)
+    A_neg = csr_matrix((data[neg_mask], (rows[neg_mask], cols[neg_mask])), shape=A_coo.shape)
+
+    save_npz(random_pos_file, A_pos)
+    save_npz(random_neg_file, A_neg)
+
+    print(f"Random graph split into:\n  {random_pos_file}\n  {random_neg_file}")
+    return random_pos_file, random_neg_file
+
+
 def analyze_random_similarity(base_dir, random_graph_file, output_file, g=5, matrix_type='binary'):
     """
     Analyze similarities between each epoch and a random graph
@@ -143,14 +214,28 @@ def analyze_random_similarity(base_dir, random_graph_file, output_file, g=5, mat
     # Build tasks for similarities between epochs and random graph
     print("\nComputing similarities between epochs and random graph")
     tasks = []
+    use_dual = (matrix_type == 'dual')
+    random_pos_file = None
+    random_neg_file = None
+
+    if use_dual:
+        random_pos_file, random_neg_file = _ensure_random_dual_graph(random_graph_file)
+
     for epoch_dir in epoch_dirs:
         epoch_num = int(epoch_dir.split('_')[1])
-        epoch_file = os.path.join(base_dir, epoch_dir, f'after_training_{matrix_type}.npz')
-        
-        if os.path.exists(epoch_file):
-            tasks.append((epoch_file, random_graph_file, g, matrix_type, epoch_num))
+        if use_dual:
+            epoch_pos = os.path.join(base_dir, epoch_dir, 'after_training_positive.npz')
+            epoch_neg = os.path.join(base_dir, epoch_dir, 'after_training_negative.npz')
+            if os.path.exists(epoch_pos) and os.path.exists(epoch_neg):
+                tasks.append((epoch_pos, random_pos_file, epoch_neg, random_neg_file, g, epoch_num))
+            else:
+                print(f"  Epoch {epoch_num}: positive/negative files not found, skipping")
         else:
-            print(f"  Epoch {epoch_num}: File not found, skipping")
+            epoch_file = os.path.join(base_dir, epoch_dir, f'after_training_{matrix_type}.npz')
+            if os.path.exists(epoch_file):
+                tasks.append((epoch_file, random_graph_file, g, matrix_type, epoch_num))
+            else:
+                print(f"  Epoch {epoch_num}: File not found, skipping")
     
     if not tasks:
         print("No epochs to compare.")
@@ -159,8 +244,10 @@ def analyze_random_similarity(base_dir, random_graph_file, output_file, g=5, mat
     num_workers = min(cpu_count(), len(tasks))
     print(f"Using {num_workers} parallel workers")
     
+    worker_fn = _random_similarity_dual_task if use_dual else _random_similarity_task
+
     with Pool(processes=num_workers) as pool:
-        for epoch_num, sim in pool.imap_unordered(_random_similarity_task, tasks):
+        for epoch_num, sim in pool.imap_unordered(worker_fn, tasks):
             print(f"  Computing: Epoch {epoch_num} vs Random graph", end=' ')
             if sim is not None:
                 results.append({
@@ -262,12 +349,12 @@ def analyze_random_jaccard_similarity(base_dir, random_graph_file, output_file, 
 
 
 def main():
-    base_dir = "SET-MLP-Keras-Weights-Mask/results/adjacency_matrices"
+    adj_base = "SET-MLP-Keras-Weights-Mask/results/adjacency_matrices"
     output_dir = "SET-MLP-Keras-Weights-Mask/results"
     os.makedirs(output_dir, exist_ok=True)
     
-    # Path to random graph (12082 nodes)
-    random_graph_file = "similarity_metrics/test_graphs/random_sparse_1690_sparsity_0.9300.npz"
+    # Path to random graph
+    random_graph_file = "similarity_metrics/test_graphs/random_sparse_1690_sparsity_0.8000.npz"
     
     # Check if random graph exists
     if not os.path.exists(random_graph_file):
@@ -284,23 +371,45 @@ def main():
     if sys.argv[2:]:
         matrix_type = sys.argv[2]
     else:
-        matrix_type = 'binary'
+        matrix_type = 'weighted'
     
-    # DeltaCon similarity
+    # Determine run subdirectories (run_0, run_1, ...) similar to analyze_similarity.py
+    if not os.path.isdir(adj_base):
+        print(f"Error: adjacency base dir not found: {adj_base}")
+        return
+
+    run_dirs = []
+    for d in os.listdir(adj_base):
+        path = os.path.join(adj_base, d)
+        if os.path.isdir(path) and d.startswith('run_'):
+            run_dirs.append(d)
+
+    if not run_dirs:
+        base_dirs = [adj_base]
+        run_labels = ["single"]
+    else:
+        run_dirs.sort(key=lambda x: int(x.replace('run_', '')))
+        base_dirs = [os.path.join(adj_base, d) for d in run_dirs]
+        run_labels = run_dirs
+
+    # DeltaCon similarity for each run/single base_dir
     output_file = os.path.join(output_dir, f'deltacon_similarity_{matrix_type}.csv')
-    start_time = time.time()
-    analyze_random_similarity(base_dir, random_graph_file, output_file, g=g, matrix_type=matrix_type)
-    end_time = time.time()
+    for base_dir, run_label in zip(base_dirs, run_labels):
+        print(f"\n=== Random DeltaCon for {run_label} ===")
+        start_time = time.time()
+        analyze_random_similarity(base_dir, random_graph_file, output_file, g=g, matrix_type=matrix_type)
+        end_time = time.time()
+        print(f"DeltaCon processing time ({run_label}): {end_time - start_time:.2f} seconds")
     
-    print(f"\nDeltaCon processing time: {end_time - start_time:.2f} seconds")
-    
-    # Jaccard similarity
-    jaccard_output_file = os.path.join(output_dir, f'jaccard_similarity_{matrix_type}.csv')
-    start_time = time.time()
-    analyze_random_jaccard_similarity(base_dir, random_graph_file, jaccard_output_file, matrix_type=matrix_type)
-    end_time = time.time()
-    
-    print(f"\nJaccard processing time: {end_time - start_time:.2f} seconds")
+    # Jaccard similarity (only for non-dual types)
+    if matrix_type != 'dual':
+        jaccard_output_file = os.path.join(output_dir, f'jaccard_similarity_{matrix_type}.csv')
+        for base_dir, run_label in zip(base_dirs, run_labels):
+            print(f"\n=== Random Jaccard for {run_label} ===")
+            start_time = time.time()
+            analyze_random_jaccard_similarity(base_dir, random_graph_file, jaccard_output_file, matrix_type=matrix_type)
+            end_time = time.time()
+            print(f"Jaccard processing time ({run_label}): {end_time - start_time:.2f} seconds")
     print("Analysis complete!")
 
 

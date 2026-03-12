@@ -64,11 +64,11 @@ def createWeightsMask(epsilon, noRows, noCols):
 class SET_MLP_CIFAR10:
     def __init__(self, run_id=0):
         self.run_id = run_id
-        self.epsilon = 69
-        self.zeta = 0.3 
+        self.epsilon = 46
+        self.zeta = 0.5
         self.batch_size = 100 
         self.maxepoches = 200
-        self.learning_rate = 2e-4
+        self.learning_rate = 3e-5
         self.weight_decay = 1e-4  
         self.num_classes = 10 
         self.momentum = 0.9 
@@ -246,7 +246,9 @@ class SET_MLP_CIFAR10:
         print(f"Run {self.run_id}: snapshot dir {snapshot_dir}")
         
         metadata_file = os.path.join("SET-MLP-Keras-Weights-Mask/results", f"training_metadata_run_{self.run_id}.json")
-        
+        with open(metadata_file, 'w') as f:
+            json.dump([], f)
+
         self.accuracies_per_epoch = []
         for epoch in range(self.maxepoches):
             print(f"\nRun {self.run_id} | Epoch {epoch+1}/{self.maxepoches}")

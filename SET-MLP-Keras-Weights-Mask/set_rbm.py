@@ -112,6 +112,9 @@ class SET_RBM:
 
         metadata_file = os.path.join(RESULTS_DIR, f"training_metadata_rbm_run_{self.run_id}.json") if save_snapshots else None
         metadata_records = []
+        if save_snapshots and metadata_file:
+            with open(metadata_file, 'w') as f:
+                json.dump([], f)
 
         minimum_reconstructin_error = 100000
         metrics = np.zeros((epochs, 2))

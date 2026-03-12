@@ -1,0 +1,603 @@
+权重正/负占比统计摘要 (layer=all)
+============================================================
+source=static run_0 epoch=0 after_training
+  非零边: 正 50.28%  负 49.72%  (正 25215  负 24930)
+  零权重占比: 91.15%
+source=static run_0 epoch=1 after_training
+  非零边: 正 50.28%  负 49.72%  (正 25212  负 24933)
+  零权重占比: 91.15%
+source=static run_0 epoch=2 after_training
+  非零边: 正 49.93%  负 50.07%  (正 212013  负 212625)
+  零权重占比: 25.05%
+source=static run_0 epoch=3 after_training
+  非零边: 正 49.93%  负 50.07%  (正 212005  负 212633)
+  零权重占比: 25.05%
+source=static run_0 epoch=4 after_training
+  非零边: 正 49.92%  负 50.08%  (正 211980  负 212658)
+  零权重占比: 25.05%
+source=static run_0 epoch=5 after_training
+  非零边: 正 49.92%  负 50.08%  (正 211972  负 212666)
+  零权重占比: 25.05%
+source=static run_0 epoch=6 after_training
+  非零边: 正 49.92%  负 50.08%  (正 211969  负 212669)
+  零权重占比: 25.05%
+source=static run_0 epoch=7 after_training
+  非零边: 正 49.92%  负 50.08%  (正 211963  负 212675)
+  零权重占比: 25.05%
+source=static run_0 epoch=8 after_training
+  非零边: 正 49.91%  负 50.09%  (正 211952  负 212686)
+  零权重占比: 25.05%
+source=static run_0 epoch=9 after_training
+  非零边: 正 49.91%  负 50.09%  (正 211942  负 212696)
+  零权重占比: 25.05%
+source=static run_0 epoch=10 after_training
+  非零边: 正 49.91%  负 50.09%  (正 211942  负 212696)
+  零权重占比: 25.05%
+source=static run_0 epoch=11 after_training
+  非零边: 正 49.91%  负 50.09%  (正 211934  负 212704)
+  零权重占比: 25.05%
+source=static run_0 epoch=12 after_training
+  非零边: 正 49.91%  负 50.09%  (正 211918  负 212720)
+  零权重占比: 25.05%
+source=static run_0 epoch=13 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211904  负 212734)
+  零权重占比: 25.05%
+source=static run_0 epoch=14 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211885  负 212753)
+  零权重占比: 25.05%
+source=static run_0 epoch=15 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211882  负 212756)
+  零权重占比: 25.05%
+source=static run_0 epoch=16 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211875  负 212763)
+  零权重占比: 25.05%
+source=static run_0 epoch=17 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211869  负 212769)
+  零权重占比: 25.05%
+source=static run_0 epoch=18 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211857  负 212781)
+  零权重占比: 25.05%
+source=static run_0 epoch=19 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211850  负 212788)
+  零权重占比: 25.05%
+source=static run_0 epoch=20 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211846  负 212792)
+  零权重占比: 25.05%
+source=static run_0 epoch=21 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211852  负 212786)
+  零权重占比: 25.05%
+source=static run_0 epoch=22 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211849  负 212789)
+  零权重占比: 25.05%
+source=static run_0 epoch=23 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211829  负 212809)
+  零权重占比: 25.05%
+source=static run_0 epoch=24 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211817  负 212821)
+  零权重占比: 25.05%
+source=static run_0 epoch=25 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211817  负 212821)
+  零权重占比: 25.05%
+source=static run_0 epoch=26 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211823  负 212815)
+  零权重占比: 25.05%
+source=static run_0 epoch=27 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211836  负 212802)
+  零权重占比: 25.05%
+source=static run_0 epoch=28 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211839  负 212799)
+  零权重占比: 25.05%
+source=static run_0 epoch=29 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211834  负 212804)
+  零权重占比: 25.05%
+source=static run_0 epoch=30 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211839  负 212799)
+  零权重占比: 25.05%
+source=static run_0 epoch=31 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211841  负 212797)
+  零权重占比: 25.05%
+source=static run_0 epoch=32 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211848  负 212790)
+  零权重占比: 25.05%
+source=static run_0 epoch=33 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211864  负 212774)
+  零权重占比: 25.05%
+source=static run_0 epoch=34 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211862  负 212776)
+  零权重占比: 25.05%
+source=static run_0 epoch=35 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211848  负 212790)
+  零权重占比: 25.05%
+source=static run_0 epoch=36 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211843  负 212795)
+  零权重占比: 25.05%
+source=static run_0 epoch=37 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211850  负 212788)
+  零权重占比: 25.05%
+source=static run_0 epoch=38 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211842  负 212796)
+  零权重占比: 25.05%
+source=static run_0 epoch=39 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211846  负 212792)
+  零权重占比: 25.05%
+source=static run_0 epoch=40 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211864  负 212774)
+  零权重占比: 25.05%
+source=static run_0 epoch=41 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211864  负 212774)
+  零权重占比: 25.05%
+source=static run_0 epoch=42 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211862  负 212776)
+  零权重占比: 25.05%
+source=static run_0 epoch=43 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211865  负 212773)
+  零权重占比: 25.05%
+source=static run_0 epoch=44 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211881  负 212757)
+  零权重占比: 25.05%
+source=static run_0 epoch=45 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211884  负 212754)
+  零权重占比: 25.05%
+source=static run_0 epoch=46 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211884  负 212754)
+  零权重占比: 25.05%
+source=static run_0 epoch=47 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211871  负 212767)
+  零权重占比: 25.05%
+source=static run_0 epoch=48 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211873  负 212765)
+  零权重占比: 25.05%
+source=static run_0 epoch=49 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211885  负 212753)
+  零权重占比: 25.05%
+source=static run_0 epoch=50 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211888  负 212750)
+  零权重占比: 25.05%
+source=static run_0 epoch=51 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211883  负 212755)
+  零权重占比: 25.05%
+source=static run_0 epoch=52 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211887  负 212751)
+  零权重占比: 25.05%
+source=static run_0 epoch=53 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211889  负 212749)
+  零权重占比: 25.05%
+source=static run_0 epoch=54 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211893  负 212745)
+  零权重占比: 25.05%
+source=static run_0 epoch=55 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211884  负 212754)
+  零权重占比: 25.05%
+source=static run_0 epoch=56 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211886  负 212752)
+  零权重占比: 25.05%
+source=static run_0 epoch=57 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211897  负 212741)
+  零权重占比: 25.05%
+source=static run_0 epoch=58 after_training
+  非零边: 正 49.90%  负 50.10%  (正 211880  负 212758)
+  零权重占比: 25.05%
+source=static run_0 epoch=59 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211868  负 212770)
+  零权重占比: 25.05%
+source=static run_0 epoch=60 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211868  负 212770)
+  零权重占比: 25.05%
+source=static run_0 epoch=61 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211868  负 212770)
+  零权重占比: 25.05%
+source=static run_0 epoch=62 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211871  负 212767)
+  零权重占比: 25.05%
+source=static run_0 epoch=63 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211865  负 212773)
+  零权重占比: 25.05%
+source=static run_0 epoch=64 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211853  负 212785)
+  零权重占比: 25.05%
+source=static run_0 epoch=65 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211844  负 212794)
+  零权重占比: 25.05%
+source=static run_0 epoch=66 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211839  负 212799)
+  零权重占比: 25.05%
+source=static run_0 epoch=67 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211830  负 212808)
+  零权重占比: 25.05%
+source=static run_0 epoch=68 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211825  负 212813)
+  零权重占比: 25.05%
+source=static run_0 epoch=69 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211835  负 212803)
+  零权重占比: 25.05%
+source=static run_0 epoch=70 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211835  负 212803)
+  零权重占比: 25.05%
+source=static run_0 epoch=71 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211830  负 212808)
+  零权重占比: 25.05%
+source=static run_0 epoch=72 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211832  负 212806)
+  零权重占比: 25.05%
+source=static run_0 epoch=73 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211824  负 212814)
+  零权重占比: 25.05%
+source=static run_0 epoch=74 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211835  负 212803)
+  零权重占比: 25.05%
+source=static run_0 epoch=75 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211836  负 212802)
+  零权重占比: 25.05%
+source=static run_0 epoch=76 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211830  负 212808)
+  零权重占比: 25.05%
+source=static run_0 epoch=77 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211839  负 212799)
+  零权重占比: 25.05%
+source=static run_0 epoch=78 after_training
+  非零边: 正 49.89%  负 50.11%  (正 211837  负 212801)
+  零权重占比: 25.05%
+source=static run_0 epoch=79 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211829  负 212809)
+  零权重占比: 25.05%
+source=static run_0 epoch=80 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211825  负 212813)
+  零权重占比: 25.05%
+source=static run_0 epoch=81 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211820  负 212818)
+  零权重占比: 25.05%
+source=static run_0 epoch=82 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211820  负 212818)
+  零权重占比: 25.05%
+source=static run_0 epoch=83 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211818  负 212820)
+  零权重占比: 25.05%
+source=static run_0 epoch=84 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211819  负 212819)
+  零权重占比: 25.05%
+source=static run_0 epoch=85 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211816  负 212822)
+  零权重占比: 25.05%
+source=static run_0 epoch=86 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211804  负 212834)
+  零权重占比: 25.05%
+source=static run_0 epoch=87 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211803  负 212835)
+  零权重占比: 25.05%
+source=static run_0 epoch=88 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211812  负 212826)
+  零权重占比: 25.05%
+source=static run_0 epoch=89 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211812  负 212826)
+  零权重占比: 25.05%
+source=static run_0 epoch=90 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211808  负 212830)
+  零权重占比: 25.05%
+source=static run_0 epoch=91 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211801  负 212837)
+  零权重占比: 25.05%
+source=static run_0 epoch=92 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211792  负 212846)
+  零权重占比: 25.05%
+source=static run_0 epoch=93 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211791  负 212847)
+  零权重占比: 25.05%
+source=static run_0 epoch=94 after_training
+  非零边: 正 49.88%  负 50.12%  (正 211790  负 212848)
+  零权重占比: 25.05%
+source=static run_0 epoch=95 after_training
+  非零边: 正 49.87%  负 50.13%  (正 211785  负 212853)
+  零权重占比: 25.05%
+source=static run_0 epoch=96 after_training
+  非零边: 正 49.87%  负 50.13%  (正 211778  负 212860)
+  零权重占比: 25.05%
+source=static run_0 epoch=97 after_training
+  非零边: 正 49.87%  负 50.13%  (正 211780  负 212858)
+  零权重占比: 25.05%
+source=static run_0 epoch=98 after_training
+  非零边: 正 49.87%  负 50.13%  (正 211776  负 212862)
+  零权重占比: 25.05%
+source=static run_0 epoch=99 after_training
+  非零边: 正 49.87%  负 50.13%  (正 211755  负 212883)
+  零权重占比: 25.05%
+source=static run_0 epoch=100 after_training
+  非零边: 正 49.87%  负 50.13%  (正 211755  负 212883)
+  零权重占比: 25.05%
+source=static run_0 epoch=101 after_training
+  非零边: 正 49.87%  负 50.13%  (正 211750  负 212888)
+  零权重占比: 25.05%
+source=static run_0 epoch=102 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211739  负 212899)
+  零权重占比: 25.05%
+source=static run_0 epoch=103 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211733  负 212905)
+  零权重占比: 25.05%
+source=static run_0 epoch=104 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211739  负 212899)
+  零权重占比: 25.05%
+source=static run_0 epoch=105 after_training
+  非零边: 正 49.87%  负 50.13%  (正 211746  负 212892)
+  零权重占比: 25.05%
+source=static run_0 epoch=106 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211740  负 212898)
+  零权重占比: 25.05%
+source=static run_0 epoch=107 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211726  负 212912)
+  零权重占比: 25.05%
+source=static run_0 epoch=108 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211730  负 212908)
+  零权重占比: 25.05%
+source=static run_0 epoch=109 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211717  负 212921)
+  零权重占比: 25.05%
+source=static run_0 epoch=110 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211708  负 212930)
+  零权重占比: 25.05%
+source=static run_0 epoch=111 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211710  负 212928)
+  零权重占比: 25.05%
+source=static run_0 epoch=112 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211719  负 212919)
+  零权重占比: 25.05%
+source=static run_0 epoch=113 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211717  负 212921)
+  零权重占比: 25.05%
+source=static run_0 epoch=114 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211717  负 212921)
+  零权重占比: 25.05%
+source=static run_0 epoch=115 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211718  负 212920)
+  零权重占比: 25.05%
+source=static run_0 epoch=116 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211711  负 212927)
+  零权重占比: 25.05%
+source=static run_0 epoch=117 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211713  负 212925)
+  零权重占比: 25.05%
+source=static run_0 epoch=118 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211715  负 212923)
+  零权重占比: 25.05%
+source=static run_0 epoch=119 after_training
+  非零边: 正 49.86%  负 50.14%  (正 211720  负 212918)
+  零权重占比: 25.05%
+source=static run_0 epoch=120 after_training
+  非零边: 正 49.85%  负 50.15%  (正 211703  负 212935)
+  零权重占比: 25.05%
+source=static run_0 epoch=121 after_training
+  非零边: 正 49.85%  负 50.15%  (正 211690  负 212948)
+  零权重占比: 25.05%
+source=static run_0 epoch=122 after_training
+  非零边: 正 49.85%  负 50.15%  (正 211692  负 212946)
+  零权重占比: 25.05%
+source=static run_0 epoch=123 after_training
+  非零边: 正 49.85%  负 50.15%  (正 211688  负 212950)
+  零权重占比: 25.05%
+source=static run_0 epoch=124 after_training
+  非零边: 正 49.85%  负 50.15%  (正 211686  负 212952)
+  零权重占比: 25.05%
+source=static run_0 epoch=125 after_training
+  非零边: 正 49.85%  负 50.15%  (正 211674  负 212964)
+  零权重占比: 25.05%
+source=static run_0 epoch=126 after_training
+  非零边: 正 49.85%  负 50.15%  (正 211668  负 212970)
+  零权重占比: 25.05%
+source=static run_0 epoch=127 after_training
+  非零边: 正 49.85%  负 50.15%  (正 211669  负 212969)
+  零权重占比: 25.05%
+source=static run_0 epoch=128 after_training
+  非零边: 正 49.85%  负 50.15%  (正 211662  负 212976)
+  零权重占比: 25.05%
+source=static run_0 epoch=129 after_training
+  非零边: 正 49.84%  负 50.16%  (正 211657  负 212981)
+  零权重占比: 25.05%
+source=static run_0 epoch=130 after_training
+  非零边: 正 49.84%  负 50.16%  (正 211657  负 212981)
+  零权重占比: 25.05%
+source=static run_0 epoch=131 after_training
+  非零边: 正 49.84%  负 50.16%  (正 211647  负 212991)
+  零权重占比: 25.05%
+source=static run_0 epoch=132 after_training
+  非零边: 正 49.84%  负 50.16%  (正 211641  负 212997)
+  零权重占比: 25.05%
+source=static run_0 epoch=133 after_training
+  非零边: 正 49.84%  负 50.16%  (正 211639  负 212999)
+  零权重占比: 25.05%
+source=static run_0 epoch=134 after_training
+  非零边: 正 49.84%  负 50.16%  (正 211639  负 212999)
+  零权重占比: 25.05%
+source=static run_0 epoch=135 after_training
+  非零边: 正 49.84%  负 50.16%  (正 211632  负 213006)
+  零权重占比: 25.05%
+source=static run_0 epoch=136 after_training
+  非零边: 正 49.84%  负 50.16%  (正 211633  负 213005)
+  零权重占比: 25.05%
+source=static run_0 epoch=137 after_training
+  非零边: 正 49.84%  负 50.16%  (正 211627  负 213011)
+  零权重占比: 25.05%
+source=static run_0 epoch=138 after_training
+  非零边: 正 49.84%  负 50.16%  (正 211623  负 213015)
+  零权重占比: 25.05%
+source=static run_0 epoch=139 after_training
+  非零边: 正 49.83%  负 50.17%  (正 211605  负 213033)
+  零权重占比: 25.05%
+source=static run_0 epoch=140 after_training
+  非零边: 正 49.83%  负 50.17%  (正 211597  负 213041)
+  零权重占比: 25.05%
+source=static run_0 epoch=141 after_training
+  非零边: 正 49.83%  负 50.17%  (正 211604  负 213034)
+  零权重占比: 25.05%
+source=static run_0 epoch=142 after_training
+  非零边: 正 49.83%  负 50.17%  (正 211596  负 213042)
+  零权重占比: 25.05%
+source=static run_0 epoch=143 after_training
+  非零边: 正 49.83%  负 50.17%  (正 211598  负 213040)
+  零权重占比: 25.05%
+source=static run_0 epoch=144 after_training
+  非零边: 正 49.83%  负 50.17%  (正 211599  负 213039)
+  零权重占比: 25.05%
+source=static run_0 epoch=145 after_training
+  非零边: 正 49.83%  负 50.17%  (正 211600  负 213038)
+  零权重占比: 25.05%
+source=static run_0 epoch=146 after_training
+  非零边: 正 49.83%  负 50.17%  (正 211593  负 213045)
+  零权重占比: 25.05%
+source=static run_0 epoch=147 after_training
+  非零边: 正 49.83%  负 50.17%  (正 211581  负 213057)
+  零权重占比: 25.05%
+source=static run_0 epoch=148 after_training
+  非零边: 正 49.82%  负 50.18%  (正 211573  负 213065)
+  零权重占比: 25.05%
+source=static run_0 epoch=149 after_training
+  非零边: 正 49.82%  负 50.18%  (正 211568  负 213070)
+  零权重占比: 25.05%
+source=static run_0 epoch=150 after_training
+  非零边: 正 49.82%  负 50.18%  (正 211564  负 213074)
+  零权重占比: 25.05%
+source=static run_0 epoch=151 after_training
+  非零边: 正 49.82%  负 50.18%  (正 211544  负 213094)
+  零权重占比: 25.05%
+source=static run_0 epoch=152 after_training
+  非零边: 正 49.82%  负 50.18%  (正 211551  负 213087)
+  零权重占比: 25.05%
+source=static run_0 epoch=153 after_training
+  非零边: 正 49.82%  负 50.18%  (正 211544  负 213094)
+  零权重占比: 25.05%
+source=static run_0 epoch=154 after_training
+  非零边: 正 49.82%  负 50.18%  (正 211548  负 213090)
+  零权重占比: 25.05%
+source=static run_0 epoch=155 after_training
+  非零边: 正 49.81%  负 50.19%  (正 211532  负 213106)
+  零权重占比: 25.05%
+source=static run_0 epoch=156 after_training
+  非零边: 正 49.82%  负 50.18%  (正 211542  负 213096)
+  零权重占比: 25.05%
+source=static run_0 epoch=157 after_training
+  非零边: 正 49.81%  负 50.19%  (正 211523  负 213115)
+  零权重占比: 25.05%
+source=static run_0 epoch=158 after_training
+  非零边: 正 49.81%  负 50.19%  (正 211518  负 213120)
+  零权重占比: 25.05%
+source=static run_0 epoch=159 after_training
+  非零边: 正 49.81%  负 50.19%  (正 211515  负 213123)
+  零权重占比: 25.05%
+source=static run_0 epoch=160 after_training
+  非零边: 正 49.81%  负 50.19%  (正 211514  负 213124)
+  零权重占比: 25.05%
+source=static run_0 epoch=161 after_training
+  非零边: 正 49.81%  负 50.19%  (正 211503  负 213135)
+  零权重占比: 25.05%
+source=static run_0 epoch=162 after_training
+  非零边: 正 49.81%  负 50.19%  (正 211507  负 213131)
+  零权重占比: 25.05%
+source=static run_0 epoch=163 after_training
+  非零边: 正 49.81%  负 50.19%  (正 211495  负 213143)
+  零权重占比: 25.05%
+source=static run_0 epoch=164 after_training
+  非零边: 正 49.80%  负 50.20%  (正 211484  负 213154)
+  零权重占比: 25.05%
+source=static run_0 epoch=165 after_training
+  非零边: 正 49.80%  负 50.20%  (正 211476  负 213162)
+  零权重占比: 25.05%
+source=static run_0 epoch=166 after_training
+  非零边: 正 49.80%  负 50.20%  (正 211472  负 213166)
+  零权重占比: 25.05%
+source=static run_0 epoch=167 after_training
+  非零边: 正 49.80%  负 50.20%  (正 211469  负 213169)
+  零权重占比: 25.05%
+source=static run_0 epoch=168 after_training
+  非零边: 正 49.80%  负 50.20%  (正 211465  负 213173)
+  零权重占比: 25.05%
+source=static run_0 epoch=169 after_training
+  非零边: 正 49.80%  负 50.20%  (正 211465  负 213173)
+  零权重占比: 25.05%
+source=static run_0 epoch=170 after_training
+  非零边: 正 49.80%  负 50.20%  (正 211452  负 213186)
+  零权重占比: 25.05%
+source=static run_0 epoch=171 after_training
+  非零边: 正 49.79%  负 50.21%  (正 211431  负 213207)
+  零权重占比: 25.05%
+source=static run_0 epoch=172 after_training
+  非零边: 正 49.79%  负 50.21%  (正 211432  负 213206)
+  零权重占比: 25.05%
+source=static run_0 epoch=173 after_training
+  非零边: 正 49.79%  负 50.21%  (正 211427  负 213211)
+  零权重占比: 25.05%
+source=static run_0 epoch=174 after_training
+  非零边: 正 49.79%  负 50.21%  (正 211422  负 213216)
+  零权重占比: 25.05%
+source=static run_0 epoch=175 after_training
+  非零边: 正 49.79%  负 50.21%  (正 211426  负 213212)
+  零权重占比: 25.05%
+source=static run_0 epoch=176 after_training
+  非零边: 正 49.79%  负 50.21%  (正 211422  负 213216)
+  零权重占比: 25.05%
+source=static run_0 epoch=177 after_training
+  非零边: 正 49.79%  负 50.21%  (正 211424  负 213214)
+  零权重占比: 25.05%
+source=static run_0 epoch=178 after_training
+  非零边: 正 49.79%  负 50.21%  (正 211423  负 213215)
+  零权重占比: 25.05%
+source=static run_0 epoch=179 after_training
+  非零边: 正 49.79%  负 50.21%  (正 211412  负 213226)
+  零权重占比: 25.05%
+source=static run_0 epoch=180 after_training
+  非零边: 正 49.79%  负 50.21%  (正 211410  负 213228)
+  零权重占比: 25.05%
+source=static run_0 epoch=181 after_training
+  非零边: 正 49.79%  负 50.21%  (正 211409  负 213229)
+  零权重占比: 25.05%
+source=static run_0 epoch=182 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211399  负 213239)
+  零权重占比: 25.05%
+source=static run_0 epoch=183 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211392  负 213246)
+  零权重占比: 25.05%
+source=static run_0 epoch=184 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211385  负 213253)
+  零权重占比: 25.05%
+source=static run_0 epoch=185 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211388  负 213250)
+  零权重占比: 25.05%
+source=static run_0 epoch=186 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211382  负 213256)
+  零权重占比: 25.05%
+source=static run_0 epoch=187 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211371  负 213267)
+  零权重占比: 25.05%
+source=static run_0 epoch=188 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211370  负 213268)
+  零权重占比: 25.05%
+source=static run_0 epoch=189 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211367  负 213271)
+  零权重占比: 25.05%
+source=static run_0 epoch=190 after_training
+  非零边: 正 49.77%  负 50.23%  (正 211362  负 213276)
+  零权重占比: 25.05%
+source=static run_0 epoch=191 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211366  负 213272)
+  零权重占比: 25.05%
+source=static run_0 epoch=192 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211377  负 213261)
+  零权重占比: 25.05%
+source=static run_0 epoch=193 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211380  负 213258)
+  零权重占比: 25.05%
+source=static run_0 epoch=194 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211378  负 213260)
+  零权重占比: 25.05%
+source=static run_0 epoch=195 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211380  负 213258)
+  零权重占比: 25.05%
+source=static run_0 epoch=196 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211369  负 213269)
+  零权重占比: 25.05%
+source=static run_0 epoch=197 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211374  负 213264)
+  零权重占比: 25.05%
+source=static run_0 epoch=198 after_training
+  非零边: 正 49.77%  负 50.23%  (正 211363  负 213275)
+  零权重占比: 25.05%
+source=static run_0 epoch=199 after_training
+  非零边: 正 49.78%  负 50.22%  (正 211370  负 213268)
+  零权重占比: 25.05%
+============================================================

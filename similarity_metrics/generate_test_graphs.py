@@ -160,7 +160,7 @@ def create_random_sparse_graph(n_nodes, sparsity, seed=None):
 
 def main():
     # Create test_graphs directory
-    output_dir = "deltacon/test_graphs"
+    output_dir = "similarity_metrics/test_graphs"
     os.makedirs(output_dir, exist_ok=True)
     
     print("Generating test graphs...")

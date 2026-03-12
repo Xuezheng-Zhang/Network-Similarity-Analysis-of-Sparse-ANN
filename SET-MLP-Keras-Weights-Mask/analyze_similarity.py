@@ -525,9 +525,9 @@ def main():
     else:
         g = 5
     if sys.argv[2:]:
-        n = int(sys.argv[2])
+        n_values = [int(sys.argv[2])]
     else:
-        n = 30
+        n_values = [3, 5, 10, 20, 30]
     if sys.argv[3:]:
         matrix_type = sys.argv[3]
     else:
@@ -545,18 +545,26 @@ def main():
     deltacon_csv = os.path.join(output_dir, f'deltacon_similarity_{matrix_type}.csv')
     jaccard_csv = os.path.join(output_dir, f'jaccard_similarity_{matrix_type}.csv')
 
-    for idx, base_dir in enumerate(base_dirs):
-        run_id = run_ids[idx]
-        run_label = f"run_{run_id}" if run_id is not None else "single"
-        print(f"\n{'='*60}\n>>> {run_label}\n{'='*60}")
+    # Always start from fresh CSV files for this matrix_type
+    if os.path.exists(deltacon_csv):
+        os.remove(deltacon_csv)
+    if os.path.exists(jaccard_csv):
+        os.remove(jaccard_csv)
 
-        start = time.time()
-        analyze_epoch_similarities(base_dir, deltacon_csv, g=g, n=n, matrix_type=matrix_type, run_id=run_id)
-        print(f"DeltaCon ({run_label}): {time.time() - start:.2f}s")
+    for n in n_values:
+        print(f"\nRunning analyses with step size n={n}")
+        for idx, base_dir in enumerate(base_dirs):
+            run_id = run_ids[idx]
+            run_label = f"run_{run_id}" if run_id is not None else "single"
+            print(f"\n{'='*60}\n>>> {run_label} (n={n})\n{'='*60}")
 
-        start = time.time()
-        analyze_jaccard_similarities(base_dir, jaccard_csv, n=n, matrix_type=matrix_type, run_id=run_id)
-        print(f"Jaccard ({run_label}): {time.time() - start:.2f}s")
+            start = time.time()
+            analyze_epoch_similarities(base_dir, deltacon_csv, g=g, n=n, matrix_type=matrix_type, run_id=run_id)
+            print(f"DeltaCon (run {run_label}, n={n}): {time.time() - start:.2f}s")
+
+            start = time.time()
+            analyze_jaccard_similarities(base_dir, jaccard_csv, n=n, matrix_type=matrix_type, run_id=run_id)
+            print(f"Jaccard (run {run_label}, n={n}): {time.time() - start:.2f}s")
 
     print(f"\nResults written to {deltacon_csv} and {jaccard_csv}")
     print("Analysis complete!")

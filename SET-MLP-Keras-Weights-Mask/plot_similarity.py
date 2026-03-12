@@ -56,18 +56,20 @@ def get_val_accuracy_range(epoch1, epoch2, epoch_to_acc):
 
 
 def add_accuracy_line(epoch_to_acc):
-    """Add val accuracy as green line on right y-axis (twin axis); left=Similarity Score, all text black."""
+    """Add val accuracy as green line on right y-axis; left y-axis blue (similarity), right y-axis green (accuracy)."""
     if not epoch_to_acc:
         return
     ax = plt.gca()
-    ax.set_ylabel("Similarity Score", fontsize=12, color="black")
-    ax.tick_params(axis="y", labelcolor="black")
+    ax.set_ylabel("Similarity Score", fontsize=12, color="blue")
+    ax.tick_params(axis="y", labelcolor="blue")
+    ax.spines["left"].set_color("blue")
     ax2 = ax.twinx()
     ep = sorted(epoch_to_acc.keys())
     acc = [epoch_to_acc[e] for e in ep]
     ax2.plot(ep, acc, color="green", linewidth=2, label="Val Accuracy")
-    ax2.set_ylabel("Val Accuracy", fontsize=12, color="black")
-    ax2.tick_params(axis="y", labelcolor="black")
+    ax2.set_ylabel("Val Accuracy", fontsize=12, color="green")
+    ax2.tick_params(axis="y", labelcolor="green")
+    ax2.spines["right"].set_color("green")
     lines1, labels1 = ax.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax.legend(lines1 + lines2, labels1 + labels2, loc="best")
@@ -123,7 +125,7 @@ def plot_deltacon_similarity_by_n(matrix_type="binary"):
         ax_left = plt.gcf().axes[0]
         ax_left.set_title(f"DeltaCon Similarity ({matrix_type}, step n={n_val})", fontsize=14, fontweight="bold", color="black")
         ax_left.set_xlabel('Epoch t to t+n', fontsize=12, color="black")
-        ax_left.set_ylabel("Similarity Score", fontsize=12, color="black")
+        ax_left.set_ylabel("Similarity Score", fontsize=12, color="blue")
         ax_left.grid(True, which='both', linestyle='--', alpha=0.5)
         ax_left.set_xticks(epochs)
         ax_left.set_xticklabels(x_labels, rotation=30)
@@ -165,7 +167,7 @@ def plot_deltacon_similarity_dual_by_n():
         ax_left = plt.gcf().axes[0]
         ax_left.set_title(f"DeltaCon Similarity Dual (step n={n_val})", fontsize=14, fontweight="bold", color="black")
         ax_left.set_xlabel('Epoch t to t+n', fontsize=12, color="black")
-        ax_left.set_ylabel("Similarity Score", fontsize=12, color="black")
+        ax_left.set_ylabel("Similarity Score", fontsize=12, color="blue")
         ax_left.grid(True, which='both', linestyle='--', alpha=0.5)
         ax_left.set_xticks(epochs)
         ax_left.set_xticklabels(x_labels, rotation=30)
@@ -215,7 +217,7 @@ def plot_jaccard_similarity_by_n(matrix_type="binary"):
         ax_left = plt.gcf().axes[0]
         ax_left.set_title(f"Jaccard Similarity ({matrix_type}, step n={n_val})", fontsize=14, fontweight="bold", color="black")
         ax_left.set_xlabel('Epoch t to t+n', fontsize=12, color="black")
-        ax_left.set_ylabel("Similarity Score", fontsize=12, color="black")
+        ax_left.set_ylabel("Similarity Score", fontsize=12, color="blue")
         ax_left.grid(True, which='both', linestyle='--', alpha=0.5)
         ax_left.set_xticks(epochs)
         ax_left.set_xticklabels(x_labels, rotation=30)
@@ -257,7 +259,7 @@ def plot_jaccard_similarity_dual_by_n():
         ax_left = plt.gcf().axes[0]
         ax_left.set_title(f"Jaccard Similarity Dual (step n={n_val})", fontsize=14, fontweight="bold", color="black")
         ax_left.set_xlabel('Epoch t to t+n', fontsize=12, color="black")
-        ax_left.set_ylabel("Similarity Score", fontsize=12, color="black")
+        ax_left.set_ylabel("Similarity Score", fontsize=12, color="blue")
         ax_left.grid(True, which='both', linestyle='--', alpha=0.5)
         ax_left.set_xticks(epochs)
         ax_left.set_xticklabels(x_labels, rotation=30)

@@ -68,7 +68,7 @@ class SET_MLP_CIFAR10:
         self.zeta = 0.5
         self.batch_size = 100 
         self.maxepoches = 200
-        self.learning_rate = 3e-5
+        self.learning_rate = 5e-5
         self.weight_decay = 1e-4  
         self.num_classes = 10 
         self.momentum = 0.9 

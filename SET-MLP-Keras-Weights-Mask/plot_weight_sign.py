@@ -1,8 +1,3 @@
-"""
-Plot positive/negative weight ratio per epoch from weight_sign_stats.json.
-Uses layer="all", stage="after_training" to get one point per (source, run, epoch).
-Output: results/weight_sign_ratio_by_epoch_{source}_{run}.png (one figure per run).
-"""
 import json
 import os
 from collections import defaultdict

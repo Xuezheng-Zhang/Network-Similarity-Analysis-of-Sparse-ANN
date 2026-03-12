@@ -1,8 +1,5 @@
 """
-Compute counts and fractions of positive vs negative weights in neural network
-weight matrices. Use this to understand the sign distribution in weighted
-adjacency matrices (e.g. for dual-channel or signed analysis).
-Outputs a single JSON file to results/weight_sign_stats.json.
+Compute positive vs negative weights in neural network
 """
 import json
 import numpy as np

@@ -310,7 +310,7 @@ def eval_accuracy_on_hidden(rbm, X_train, y_train, X_test, y_test):
 
 NUM_RUNS = 1
 NO_HIDDENS = 200
-EPSILON = 10
+EPSILON = 16
 EPOCHS = 10
 BATCH_SIZE = 256
 

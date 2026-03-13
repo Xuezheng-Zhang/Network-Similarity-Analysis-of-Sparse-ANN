@@ -531,7 +531,7 @@ def main():
     if sys.argv[3:]:
         matrix_type = sys.argv[3]
     else:
-        matrix_type = 'dual'
+        matrix_type = 'binary'
 
     run_dirs = get_run_dirs(adj_base)
     if not run_dirs:

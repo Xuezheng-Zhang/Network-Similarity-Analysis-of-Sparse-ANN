@@ -7,6 +7,7 @@ import sys
 import numpy as np
 
 RESULTS_DIR = "SET-MLP-Keras-Weights-Mask/results"
+GRAPH_DIR = os.path.join(RESULTS_DIR, "diagram")
 
 def load_val_accuracy_data():
     pat = os.path.join(RESULTS_DIR, "training_metadata_run_*.json")
@@ -71,7 +72,7 @@ def add_accuracy_line(epoch_to_acc):
     ax2.spines["right"].set_color("green")
     lines1, labels1 = ax.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
-    ax.legend(lines1 + lines2, labels1 + labels2, loc="best")
+    ax.legend(lines1 + lines2, labels1 + labels2, loc="lower right")
 
 
 def _set_xlabel_rotation_30():
@@ -102,7 +103,7 @@ def plot_deltacon_similarity_by_n(matrix_type="binary"):
 
     epoch_to_acc = load_val_accuracy_data()
     unique_n_values = sorted(between_epochs["n"].unique())
-    output_dir = RESULTS_DIR
+    output_dir = GRAPH_DIR
     os.makedirs(output_dir, exist_ok=True)
     mean_over_runs = "Run" in df.columns
     name_suffix = "" if matrix_type == "binary" else f"_{matrix_type}"
@@ -115,14 +116,14 @@ def plot_deltacon_similarity_by_n(matrix_type="binary"):
         similarities = data_n["Similarity"].values
         epoch2_values = data_n["Epoch2"].values
 
-        x_labels = [f"{int(e1)}-{int(e2)}" for e1, e2 in zip(epochs, epoch2_values)]
+        x_labels = [f"{int(e1)}" for e1 in epochs]
         plt.figure(figsize=(12, 8))
         ax_left = plt.gca()
         ax_left.plot(epochs, similarities, marker="o", linestyle="-", linewidth=2, markersize=8,
                     label=f"n={n_val}", color="blue")
         add_accuracy_line(epoch_to_acc)
         ax_left = plt.gcf().axes[0]
-        ax_left.set_title(f"DeltaCon Similarity ({matrix_type}, step n={n_val})", fontsize=14, fontweight="bold", color="black")
+        ax_left.set_title(f"DeltaCon Similarity (step n={n_val})", fontsize=14, fontweight="bold", color="black")
         ax_left.set_xlabel('Epoch t to t+n', fontsize=12, color="black")
         ax_left.set_ylabel("Similarity Score", fontsize=12, color="blue")
         ax_left.grid(True, which='both', linestyle='--', alpha=0.5)
@@ -149,7 +150,7 @@ def plot_deltacon_similarity_dual_by_n():
         return
     epoch_to_acc = load_val_accuracy_data()
     unique_n_values = sorted(between_epochs["n"].unique())
-    output_dir = RESULTS_DIR
+    output_dir = GRAPH_DIR
     os.makedirs(output_dir, exist_ok=True)
     for n_val in unique_n_values:
         data_n = between_epochs[between_epochs["n"] == n_val].copy()
@@ -157,14 +158,14 @@ def plot_deltacon_similarity_dual_by_n():
         epochs = data_n["Epoch1"].values
         similarities = data_n["Similarity"].values
         epoch2_values = data_n["Epoch2"].values
-        x_labels = [f"{int(e1)}-{int(e2)}" for e1, e2 in zip(epochs, epoch2_values)]
+        x_labels = [f"{int(e1)}" for e1 in epochs]
         plt.figure(figsize=(12, 8))
         ax_left = plt.gca()
         ax_left.plot(epochs, similarities, marker="o", linestyle="-", linewidth=2, markersize=8,
                     label=f"n={n_val}", color="blue")
         add_accuracy_line(epoch_to_acc)
         ax_left = plt.gcf().axes[0]
-        ax_left.set_title(f"DeltaCon Similarity Dual (step n={n_val})", fontsize=14, fontweight="bold", color="black")
+        ax_left.set_title(f"DeltaCon Similarity (step n={n_val})", fontsize=14, fontweight="bold", color="black")
         ax_left.set_xlabel('Epoch t to t+n', fontsize=12, color="black")
         ax_left.set_ylabel("Similarity Score", fontsize=12, color="blue")
         ax_left.grid(True, which='both', linestyle='--', alpha=0.5)
@@ -195,7 +196,7 @@ def plot_jaccard_similarity_by_n(matrix_type="binary"):
 
     epoch_to_acc = load_val_accuracy_data()
     unique_n_values = sorted(between_epochs["n"].unique())
-    output_dir = RESULTS_DIR
+    output_dir = GRAPH_DIR
     os.makedirs(output_dir, exist_ok=True)
     name_suffix = "" if matrix_type == "binary" else f"_{matrix_type}"
 
@@ -207,14 +208,14 @@ def plot_jaccard_similarity_by_n(matrix_type="binary"):
         similarities = data_n["Similarity"].values
         epoch2_values = data_n["Epoch2"].values
 
-        x_labels = [f"{int(e1)}-{int(e2)}" for e1, e2 in zip(epochs, epoch2_values)]
+        x_labels = [f"{int(e1)}" for e1 in epochs]
         plt.figure(figsize=(12, 8))
         ax_left = plt.gca()
         ax_left.plot(epochs, similarities, marker="o", linestyle="-", linewidth=2, markersize=8,
                     label=f"n={n_val}", color="blue")
         add_accuracy_line(epoch_to_acc)
         ax_left = plt.gcf().axes[0]
-        ax_left.set_title(f"Jaccard Similarity ({matrix_type}, step n={n_val})", fontsize=14, fontweight="bold", color="black")
+        ax_left.set_title(f"Jaccard Similarity (step n={n_val})", fontsize=14, fontweight="bold", color="black")
         ax_left.set_xlabel('Epoch t to t+n', fontsize=12, color="black")
         ax_left.set_ylabel("Similarity Score", fontsize=12, color="blue")
         ax_left.grid(True, which='both', linestyle='--', alpha=0.5)
@@ -241,7 +242,7 @@ def plot_jaccard_similarity_dual_by_n():
         return
     epoch_to_acc = load_val_accuracy_data()
     unique_n_values = sorted(between_epochs["n"].unique())
-    output_dir = RESULTS_DIR
+    output_dir = GRAPH_DIR
     os.makedirs(output_dir, exist_ok=True)
     for n_val in unique_n_values:
         data_n = between_epochs[between_epochs["n"] == n_val].copy()
@@ -249,14 +250,14 @@ def plot_jaccard_similarity_dual_by_n():
         epochs = data_n["Epoch1"].values
         similarities = data_n["Similarity"].values
         epoch2_values = data_n["Epoch2"].values
-        x_labels = [f"{int(e1)}-{int(e2)}" for e1, e2 in zip(epochs, epoch2_values)]
+        x_labels = [f"{int(e1)}" for e1 in epochs]
         plt.figure(figsize=(12, 8))
         ax_left = plt.gca()
         ax_left.plot(epochs, similarities, marker="o", linestyle="-", linewidth=2, markersize=8,
                     label=f"n={n_val}", color="blue")
         add_accuracy_line(epoch_to_acc)
         ax_left = plt.gcf().axes[0]
-        ax_left.set_title(f"Jaccard Similarity Dual (step n={n_val})", fontsize=14, fontweight="bold", color="black")
+        ax_left.set_title(f"Jaccard Similarity (step n={n_val})", fontsize=14, fontweight="bold", color="black")
         ax_left.set_xlabel('Epoch t to t+n', fontsize=12, color="black")
         ax_left.set_ylabel("Similarity Score", fontsize=12, color="blue")
         ax_left.grid(True, which='both', linestyle='--', alpha=0.5)
@@ -290,7 +291,8 @@ def plot_similarity_between_epochs():
     plt.grid(True, which='both', linestyle='--', alpha=0.5)
     plt.xticks(epochs, rotation=30)
     
-    output_path = "SET-MLP-Keras-Weights-Mask/results/similarity_between_epochs.png"
+    os.makedirs(GRAPH_DIR, exist_ok=True)
+    output_path = os.path.join(GRAPH_DIR, "similarity_between_epochs.png")
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     print(f"Between_Epochs plot saved to: {output_path}")
     plt.close()
@@ -315,7 +317,8 @@ def plot_similarity_within_epochs():
     plt.grid(True, which='both', linestyle='--', alpha=0.5)
     plt.xticks(epochs, rotation=30)
     
-    output_path = "SET-MLP-Keras-Weights-Mask/results/similarity_within_epochs.png"
+    os.makedirs(GRAPH_DIR, exist_ok=True)
+    output_path = os.path.join(GRAPH_DIR, "similarity_within_epochs.png")
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     print(f"Within_Epochs plot saved to: {output_path}")
     plt.close()

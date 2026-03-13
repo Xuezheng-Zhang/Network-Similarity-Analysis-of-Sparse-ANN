@@ -64,7 +64,7 @@ def createWeightsMask(epsilon, noRows, noCols):
 class SET_MLP_CIFAR10:
     def __init__(self, run_id=0):
         self.run_id = run_id
-        self.epsilon = 70
+        self.epsilon = 155
         self.zeta = 0.3
         self.batch_size = 100 
         self.maxepoches = 200

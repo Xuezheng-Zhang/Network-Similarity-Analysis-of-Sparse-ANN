@@ -2,6 +2,7 @@ import json
 import numpy as np
 import os
 import sys
+import argparse
 import pandas as pd
 from scipy.sparse import load_npz
 import time
@@ -515,23 +516,23 @@ def _dual_weights_for_pair(lookup, source, run_id, epoch1_num, epoch2_num):
     return w_pos, w_neg
 
 
-def main():
-    adj_base = "SET-MLP-Keras-Weights-Mask/results/adjacency_matrices"
-    output_dir = "SET-MLP-Keras-Weights-Mask/results"
-    os.makedirs(output_dir, exist_ok=True)
+SOURCES = {
+    "set_mlp": "SET-MLP-Keras-Weights-Mask/results/adjacency_matrices",
+    "rbm": "SET-MLP-Keras-Weights-Mask/results/adjacency_matrices_rbm",
+    "static": "SET-MLP-Keras-Weights-Mask/results/adjacency_matrices_static",
+}
 
-    if sys.argv[1:]:
-        g = int(sys.argv[1])
-    else:
-        g = 5
-    if sys.argv[2:]:
-        n_values = [int(sys.argv[2])]
-    else:
-        n_values = [3, 5, 10, 20, 30]
-    if sys.argv[3:]:
-        matrix_type = sys.argv[3]
-    else:
-        matrix_type = 'binary'
+
+def analyze_source(source_name, adj_base, output_dir, g, n_values, matrix_type):
+    """Analyze a single data source."""
+    if not os.path.exists(adj_base):
+        print(f"Skipping {source_name}: {adj_base} not found")
+        return
+    
+    print(f"\n{'#'*60}")
+    print(f"# Analyzing source: {source_name}")
+    print(f"# adj_base: {adj_base}")
+    print(f"{'#'*60}")
 
     run_dirs = get_run_dirs(adj_base)
     if not run_dirs:
@@ -542,10 +543,11 @@ def main():
         base_dirs = [os.path.join(adj_base, r) for r in run_dirs]
         run_ids = [int(r.replace('run_', '')) for r in run_dirs]
 
-    deltacon_csv = os.path.join(output_dir, f'deltacon_similarity_{matrix_type}.csv')
-    jaccard_csv = os.path.join(output_dir, f'jaccard_similarity_{matrix_type}.csv')
+    # Output files include source name to distinguish results
+    deltacon_csv = os.path.join(output_dir, f'deltacon_similarity_{source_name}_{matrix_type}.csv')
+    jaccard_csv = os.path.join(output_dir, f'jaccard_similarity_{source_name}_{matrix_type}.csv')
 
-    # Always start from fresh CSV files for this matrix_type
+    # Always start from fresh CSV files
     if os.path.exists(deltacon_csv):
         os.remove(deltacon_csv)
     if os.path.exists(jaccard_csv):
@@ -556,18 +558,149 @@ def main():
         for idx, base_dir in enumerate(base_dirs):
             run_id = run_ids[idx]
             run_label = f"run_{run_id}" if run_id is not None else "single"
-            print(f"\n{'='*60}\n>>> {run_label} (n={n})\n{'='*60}")
+            print(f"\n{'='*60}\n>>> {source_name}/{run_label} (n={n})\n{'='*60}")
 
             start = time.time()
             analyze_epoch_similarities(base_dir, deltacon_csv, g=g, n=n, matrix_type=matrix_type, run_id=run_id)
-            print(f"DeltaCon (run {run_label}, n={n}): {time.time() - start:.2f}s")
+            print(f"DeltaCon ({source_name}, {run_label}, n={n}): {time.time() - start:.2f}s")
 
             start = time.time()
             analyze_jaccard_similarities(base_dir, jaccard_csv, n=n, matrix_type=matrix_type, run_id=run_id)
-            print(f"Jaccard (run {run_label}, n={n}): {time.time() - start:.2f}s")
+            print(f"Jaccard ({source_name}, {run_label}, n={n}): {time.time() - start:.2f}s")
 
-    print(f"\nResults written to {deltacon_csv} and {jaccard_csv}")
-    print("Analysis complete!")
+    print(f"\n[{source_name}] Results written to {deltacon_csv} and {jaccard_csv}")
+
+
+def _parse_sparsities(sparsities_arg):
+    return [int(x.strip()) for x in sparsities_arg.split(",") if x.strip()]
+
+
+def _append_sparsity_column(input_csv, output_csv, sparsity):
+    if not os.path.isfile(input_csv):
+        print(f"Missing input CSV for sparsity={sparsity}: {input_csv}")
+        return
+    df = pd.read_csv(input_csv)
+    if df.empty:
+        return
+    df["Sparsity"] = sparsity
+    ordered = ["Sparsity"] + [c for c in df.columns if c != "Sparsity"]
+    df = df[ordered]
+    file_exists = os.path.exists(output_csv)
+    df.to_csv(output_csv, mode="a", index=False, float_format="%.8f", header=not file_exists)
+
+
+def analyze_experiments(experiment_root, sparsities, g=5, n=10, matrix_type="dual"):
+    """
+    Batch analyze multiple sparsity experiments that already contain adjacency_matrices.
+
+    Expected per sparsity directory:
+      {experiment_root}/set_mlp_s{S}/adjacency_matrices[/run_0]/epoch_xxxx/*.npz
+    """
+    os.makedirs(experiment_root, exist_ok=True)
+    n_values = [n]
+    combined_delta = os.path.join(
+        experiment_root, f"deltacon_similarity_set_mlp_sparsities_{matrix_type}_n{n}.csv"
+    )
+    combined_jaccard = os.path.join(
+        experiment_root, f"jaccard_similarity_set_mlp_sparsities_{matrix_type}_n{n}.csv"
+    )
+    if os.path.exists(combined_delta):
+        os.remove(combined_delta)
+    if os.path.exists(combined_jaccard):
+        os.remove(combined_jaccard)
+
+    wrote_delta = False
+    wrote_jaccard = False
+    for sparsity in sparsities:
+        exp_dir = os.path.join(experiment_root, f"set_mlp_s{sparsity}")
+        adj_base = os.path.join(exp_dir, "adjacency_matrices")
+        if not os.path.isdir(adj_base):
+            print(f"Skipping sparsity={sparsity}: missing adjacency directory {adj_base}")
+            continue
+        similarity_dir = os.path.join(exp_dir, "similarity")
+        os.makedirs(similarity_dir, exist_ok=True)
+        source_name = f"set_mlp_s{sparsity}"
+        print(f"\n{'#' * 60}\n# Batch experiment sparsity={sparsity}\n{'#' * 60}")
+        analyze_source(source_name, adj_base, similarity_dir, g, n_values, matrix_type)
+
+        per_delta = os.path.join(similarity_dir, f"deltacon_similarity_{source_name}_{matrix_type}.csv")
+        per_jaccard = os.path.join(similarity_dir, f"jaccard_similarity_{source_name}_{matrix_type}.csv")
+        if os.path.isfile(per_delta):
+            wrote_delta = True
+        if os.path.isfile(per_jaccard):
+            wrote_jaccard = True
+        _append_sparsity_column(per_delta, combined_delta, sparsity)
+        _append_sparsity_column(per_jaccard, combined_jaccard, sparsity)
+
+    print("\nBatch experiment analysis complete.")
+    if wrote_delta and os.path.isfile(combined_delta):
+        print(f"Combined DeltaCon CSV: {combined_delta}")
+    else:
+        print("Combined DeltaCon CSV not created (no valid per-sparsity results found).")
+    if wrote_jaccard and os.path.isfile(combined_jaccard):
+        print(f"Combined Jaccard CSV: {combined_jaccard}")
+    else:
+        print("Combined Jaccard CSV not created (no valid per-sparsity results found).")
+
+
+def main():
+    args = sys.argv[1:]
+    if any(arg.startswith("--") for arg in args):
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--experiment-root", type=str, default=None)
+        parser.add_argument("--sparsities", type=str, default="50,70,90,98")
+        parser.add_argument("--g", type=int, default=5)
+        parser.add_argument("--n", type=int, default=10)
+        parser.add_argument("--matrix-type", type=str, default="dual")
+        parsed = parser.parse_args(args)
+        if parsed.experiment_root:
+            sparsities = _parse_sparsities(parsed.sparsities)
+            print(
+                f"Batch mode: experiment_root={parsed.experiment_root}, "
+                f"sparsities={sparsities}, g={parsed.g}, n={parsed.n}, matrix_type={parsed.matrix_type}"
+            )
+            analyze_experiments(
+                parsed.experiment_root,
+                sparsities,
+                g=parsed.g,
+                n=parsed.n,
+                matrix_type=parsed.matrix_type,
+            )
+            print("\nAnalysis complete!")
+            return
+        print("--experiment-root is required in flag mode.")
+        return
+
+    output_dir = "SET-MLP-Keras-Weights-Mask/results"
+    os.makedirs(output_dir, exist_ok=True)
+    source = "set_mlp"
+    g = 5
+    n_values = [3, 5, 10, 20]
+    matrix_type = "dual"
+    if args:
+        if args[0] in SOURCES or args[0] == "all":
+            source = args[0]
+            args = args[1:]
+        if args:
+            g = int(args[0])
+        if len(args) > 1:
+            n_values = [int(args[1])]
+        if len(args) > 2:
+            matrix_type = args[2]
+
+    print(f"Source: {source}, g={g}, n_values={n_values}, matrix_type={matrix_type}")
+    if source == "all":
+        for name, adj_base in SOURCES.items():
+            analyze_source(name, adj_base, output_dir, g, n_values, matrix_type)
+    elif source in SOURCES:
+        analyze_source(source, SOURCES[source], output_dir, g, n_values, matrix_type)
+    else:
+        print(f"Unknown source: '{source}'. Available: {list(SOURCES.keys())} or 'all'")
+        print("Usage: python analyze_similarity.py [source] [g] [n] [matrix_type]")
+        print("  source: set_mlp, rbm, static, or all (default: set_mlp)")
+        return
+
+    print("\nAnalysis complete!")
 
 if __name__ == '__main__':
     main()

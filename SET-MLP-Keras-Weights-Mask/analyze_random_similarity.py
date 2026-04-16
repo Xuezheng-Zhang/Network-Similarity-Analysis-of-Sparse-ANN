@@ -354,7 +354,7 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
     
     # Path to random graph
-    random_graph_file = "similarity_metrics/test_graphs/random_sparse_1690_sparsity_0.8000.npz"
+    random_graph_file = "similarity_metrics/test_graphs/random_sparse_1690_sparsity_0.9000.npz"
     
     # Check if random graph exists
     if not os.path.exists(random_graph_file):

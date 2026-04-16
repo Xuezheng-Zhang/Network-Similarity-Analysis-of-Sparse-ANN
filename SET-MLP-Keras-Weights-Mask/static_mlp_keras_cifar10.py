@@ -60,6 +60,7 @@ class STATIC_MLP_CIFAR10:
         self.run_id = run_id
         self.epsilon = 20
         self.batch_size = 100
+        self.zeta = 0.3
         self.maxepoches = 200
         self.learning_rate = 3e-5
         self.weight_decay = 1e-4

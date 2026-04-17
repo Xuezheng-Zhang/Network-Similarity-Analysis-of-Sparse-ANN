@@ -26,7 +26,8 @@ Network-Similarity-Analysis-of-Sparse-ANN/
     ├── convert_to_adjacency.py     # Convert snapshots to adjacency matrices
     ├── analyze_similarity.py        # Compute similarities between epochs
     ├── plot_similarity.py           # Plot similarity evolution figures
-    └── results/                     # Generated metadata, CSV files, and diagrams
+    ├── results/                     # Generated metadata, CSV files, and diagrams
+    └── ...
 ```
 
 ## Quick Start

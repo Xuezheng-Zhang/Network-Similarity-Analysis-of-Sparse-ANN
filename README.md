@@ -14,7 +14,7 @@ The project aims to study and analyze the structural evolution trends of sparse 
 - Compute graph similarity metrics between different epochs.
 - Plot various similarity evolution diagrams for analyzing.
 
-## Project structure
+## Project Structure
 
 ```text
 Network-Similarity-Analysis-of-Sparse-ANN/

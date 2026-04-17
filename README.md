@@ -18,15 +18,21 @@ The project aims to study and analyze the structural evolution trends of sparse 
 
 ```text
 Network-Similarity-Analysis-of-Sparse-ANN/
-├── experiment/                     # Server-side experiment scripts
-├── script/                         # Server-side config scripts
-├── similarity_metrics/             # Graph similarity implementations
+├── experiment/                              # Server-side experiment scripts
+├── script/                                  # Server-side config scripts
+├── similarity_metrics/                      # Graph similarity implementations
 └── SET-MLP-Keras-Weights-Mask/
-    ├── set_mlp_keras_cifar10.py    # SET-MLP training
-    ├── convert_to_adjacency.py     # Convert snapshots to adjacency matrices
-    ├── analyze_similarity.py        # Compute similarities between epochs
-    ├── plot_similarity.py           # Plot similarity evolution figures
-    └── results/                     # Generated metadata, CSV files, and diagrams
+    ├── set_mlp_keras_cifar10.py             # SET-MLP training
+    ├── static_mlp_keras_cifar10.py          # Static Sparse MLP training 
+    ├── set_rbm.py                           # SET-RBM training 
+    ├── convert_to_adjacency.py              # Convert snapshots to adjacency matrices
+    ├── analyze_similarity.py                # Compute Dual DeltaCon/Jaccard similarities
+    ├── analyze_networks.py                  # Analyze network properties
+    ├── weight_sign_stats.py                 # Compute positive/negative weight
+    ├── analyze_random_similarity.py         # Compar Random-graph similarity
+    ├── plot_similarity.py                   # Plot similarity evolution
+    ├── plot_performance.py                  # Plot training performance
+    └── results/                             # Metadata, CSV files, and diagrams
 ```
 
 ## Quick Start

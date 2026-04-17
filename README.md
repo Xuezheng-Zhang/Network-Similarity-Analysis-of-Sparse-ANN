@@ -16,39 +16,67 @@ The project aims to study and analyze the structural evolution trends of sparse 
 
 ## Project structure
 
-- `experiment/` – training scripts for running experiments on servers.
-- `script/` – training scripts for running experiments on servers.
-- `similarity_metrics/` – implementation of graph similarity metrics
-- `SET-MLP-Keras-Weights-Mask/` – main code for sparse ANN training, conversion, and analysis.
+```text
+Network-Similarity-Analysis-of-Sparse-ANN/
+├── experiment/                     # Server-side experiment scripts
+├── script/                         # Server-side config scripts
+├── similarity_metrics/             # Graph similarity implementations
+└── SET-MLP-Keras-Weights-Mask/
+    ├── set_mlp_keras_cifar10.py    # SET-MLP training
+    ├── convert_to_adjacency.py     # Convert snapshots to adjacency matrices
+    ├── analyze_similarity.py        # Compute similarities between epochs
+    ├── plot_similarity.py           # Plot similarity evolution figures
+    └── results/                     # Generated metadata, CSV files, and diagrams
+```
 
 ## Quick Start
+Take the analysis of the similarity of set-mlp model as an example:
 
-1. Run training for your custom sparsity setting:
+### 1. Run training for your custom sparsity setting:
 ```bash
 python3 SET-MLP-Keras-Weights-Mask/set_mlp_keras_cifar10.py
 ```
-2. Convert training outputs to adjacency matrices:
+After this step, outputs are saved in `SET-MLP-Keras-Weights-Mask/results/` include:
+- `graph_snapshots/` (or other similar snapshot folders): model weights for each epoch.
+- `training_metadata_run_*.json`: training data for each epoch,such as accuracy and loss.
+
+### 2. Convert training snapshots to adjacency matrices:
 ```bash
-python3 SET-MLP-Keras-Weights-Mask/convert_to_adjacency.py
+python3 SET-MLP-Keras-Weights-Mask/convert_to_adjacency.py --snapshot set_mlp
 ```
-3. Run similarity analysis:
+After this step, outputs are saved in `SET-MLP-Keras-Weights-Mask/results/adjacency_matrices/`:
+- `run_*/epoch_xxxx/after_training_*.npz`
+- `run_*/epoch_xxxx/after_pruning_*.npz`
+
+Parameter notes:
+-  `--snapshot`: snapshot type (`set_mlp`, `rbm`, `static`, or `all`, default is `all`).
+
+### 3. Run similarity analysis:
 
 ```bash
 python3 SET-MLP-Keras-Weights-Mask/analyze_similarity.py \
-  --experiment-root SET-MLP-Keras-Weights-Mask/results \
-  --n 10 --matrix-type dual
+   --experiment-root SET-MLP-Keras-Weights-Mask/results/adjacency_matrices \
+  --n 10 \
+  --matrix-type dual
 ```
 
-Parameter notes:
-- `--experiment-root`: root directory 
-- `--n`: epoch step size 
-- `--matrix-type`: modes used for similarity (`binary`, `weighted`, or `dual`).
+After this step, outputs are saved in `SET-MLP-Keras-Weights-Mask/results/similarity/` include:
+- `deltacon_similarity_*.csv`: Dual DeltaCon similarity results between epochs.
+- `jaccard_similarity_*.csv`: Jaccard similarity results between epochs.
 
-4. Generate similarity evolution plots:
+Parameter notes:
+- `--experiment-root`: root directory of analysis data.
+- `--n`: epoch step size (for example, `n=10` compare `t` vs `t+10`, default is `10`).
+- `--g`: DeltaCon parameter `g` (default is `5`).
+- `--matrix-type`: matrix type for similarity calculation (`binary`, `weighted`, or `dual`, default is `dual`).
+
+### 4. Generate similarity analyze plots:
 
 ```bash
 python3 SET-MLP-Keras-Weights-Mask/plot_similarity.py set_mlp dual
 ```
+
+After this step, plots are saved in `SET-MLP-Keras-Weights-Mask/results/diagram/`.
 
 Parameter notes:
 - `set_mlp`: data source of different models to plot (`set_mlp`, `rbm`, or `static`).

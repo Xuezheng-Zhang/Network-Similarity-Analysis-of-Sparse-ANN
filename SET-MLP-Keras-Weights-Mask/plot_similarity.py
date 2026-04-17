@@ -10,6 +10,7 @@ import numpy as np
 import argparse
 
 RESULTS_DIR = "SET-MLP-Keras-Weights-Mask/results"
+SIMILARITY_DIR = os.path.join(RESULTS_DIR, "similarity")
 GRAPH_DIR = os.path.join(RESULTS_DIR, "diagram")
 TARGET_STEP_SIZES_BY_SOURCE = {
     "set_mlp": [3, 5, 10, 20],
@@ -24,6 +25,14 @@ STAGE_LABELS = {
     "Training": "Training (50%-80%)",
     "Stabilization": "Stabilization (80%+)",
 }
+
+
+def _resolve_similarity_file(filename, base_dir=RESULTS_DIR):
+    candidates = [os.path.join(base_dir, filename), os.path.join(base_dir, "similarity", filename)]
+    for path in candidates:
+        if os.path.isfile(path):
+            return path
+    return candidates[0]
 
 def load_val_accuracy_data(source="set_mlp"):
     """Load validation accuracy data for a given source."""
@@ -183,9 +192,9 @@ def plot_deltacon_similarity_by_n(matrix_type="binary", source="set_mlp"):
         return
     # Build CSV filename based on source
     if source == "set_mlp":
-        similarity_file = os.path.join(RESULTS_DIR, f"deltacon_similarity_{matrix_type}.csv")
+        similarity_file = _resolve_similarity_file(f"deltacon_similarity_{matrix_type}.csv")
     else:
-        similarity_file = os.path.join(RESULTS_DIR, f"deltacon_similarity_{source}_{matrix_type}.csv")
+        similarity_file = _resolve_similarity_file(f"deltacon_similarity_{source}_{matrix_type}.csv")
     if not os.path.isfile(similarity_file):
         print(f"No {similarity_file}; skip DeltaCon ({source}, {matrix_type}) plot.")
         return
@@ -201,10 +210,9 @@ def plot_deltacon_similarity_by_n(matrix_type="binary", source="set_mlp"):
 def plot_deltacon_similarity_dual_by_n(source="set_mlp"):
     """Plot DeltaCon similarity for dual-channel (positive + negative) results."""
     if source == "set_mlp":
-        # Keep filename consistent with analyze_similarity.py output naming.
-        similarity_file = os.path.join(RESULTS_DIR, "deltacon_similarity_set_mlp_dual.csv")
+        similarity_file = _resolve_similarity_file("deltacon_similarity_set_mlp_dual.csv")
     else:
-        similarity_file = os.path.join(RESULTS_DIR, f"deltacon_similarity_{source}_dual.csv")
+        similarity_file = _resolve_similarity_file(f"deltacon_similarity_{source}_dual.csv")
     if not os.path.isfile(similarity_file):
         print(f"No {similarity_file}; skip DeltaCon ({source}, dual) plot.")
         return
@@ -222,9 +230,9 @@ def plot_jaccard_similarity_by_n(matrix_type="binary", source="set_mlp"):
         plot_jaccard_similarity_dual_by_n(source)
         return
     if source == "set_mlp":
-        similarity_file = os.path.join(RESULTS_DIR, f"jaccard_similarity_{matrix_type}.csv")
+        similarity_file = _resolve_similarity_file(f"jaccard_similarity_{matrix_type}.csv")
     else:
-        similarity_file = os.path.join(RESULTS_DIR, f"jaccard_similarity_{source}_{matrix_type}.csv")
+        similarity_file = _resolve_similarity_file(f"jaccard_similarity_{source}_{matrix_type}.csv")
     if not os.path.isfile(similarity_file):
         print(f"No {similarity_file}; skip Jaccard ({source}, {matrix_type}) plot.")
         return
@@ -240,10 +248,9 @@ def plot_jaccard_similarity_by_n(matrix_type="binary", source="set_mlp"):
 def plot_jaccard_similarity_dual_by_n(source="set_mlp"):
     """Plot Jaccard similarity for dual-channel (positive + negative) results."""
     if source == "set_mlp":
-        # Keep filename consistent with analyze_similarity.py output naming.
-        similarity_file = os.path.join(RESULTS_DIR, "jaccard_similarity_set_mlp_dual.csv")
+        similarity_file = _resolve_similarity_file("jaccard_similarity_set_mlp_dual.csv")
     else:
-        similarity_file = os.path.join(RESULTS_DIR, f"jaccard_similarity_{source}_dual.csv")
+        similarity_file = _resolve_similarity_file(f"jaccard_similarity_{source}_dual.csv")
     if not os.path.isfile(similarity_file):
         print(f"No {similarity_file}; skip Jaccard ({source}, dual) plot.")
         return
@@ -335,8 +342,9 @@ def map_phase_from_accuracy(acc):
 def build_phase_similarity_summary(experiment_root, metric="deltacon", matrix_type="dual", n=10, sparsities=None):
     if sparsities is None:
         sparsities = [50, 70, 90, 98]
-    combined_csv = os.path.join(
-        experiment_root, f"{metric}_similarity_set_mlp_sparsities_{matrix_type}_n{n}.csv"
+    combined_csv = _resolve_similarity_file(
+        f"{metric}_similarity_set_mlp_sparsities_{matrix_type}_n{n}.csv",
+        base_dir=experiment_root,
     )
     if not os.path.isfile(combined_csv):
         raise FileNotFoundError(f"Missing combined similarity CSV: {combined_csv}")

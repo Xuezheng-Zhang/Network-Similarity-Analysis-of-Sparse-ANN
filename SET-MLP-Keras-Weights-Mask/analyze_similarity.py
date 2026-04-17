@@ -598,11 +598,13 @@ def analyze_experiments(experiment_root, sparsities, g=5, n=10, matrix_type="dua
     """
     os.makedirs(experiment_root, exist_ok=True)
     n_values = [n]
+    combined_dir = os.path.join(experiment_root, "similarity")
+    os.makedirs(combined_dir, exist_ok=True)
     combined_delta = os.path.join(
-        experiment_root, f"deltacon_similarity_set_mlp_sparsities_{matrix_type}_n{n}.csv"
+        combined_dir, f"deltacon_similarity_set_mlp_sparsities_{matrix_type}_n{n}.csv"
     )
     combined_jaccard = os.path.join(
-        experiment_root, f"jaccard_similarity_set_mlp_sparsities_{matrix_type}_n{n}.csv"
+        combined_dir, f"jaccard_similarity_set_mlp_sparsities_{matrix_type}_n{n}.csv"
     )
     if os.path.exists(combined_delta):
         os.remove(combined_delta)
@@ -643,6 +645,49 @@ def analyze_experiments(experiment_root, sparsities, g=5, n=10, matrix_type="dua
         print("Combined Jaccard CSV not created (no valid per-sparsity results found).")
 
 
+def _is_experiments_layout(root_dir):
+    if not os.path.isdir(root_dir):
+        return False
+    for d in os.listdir(root_dir):
+        full = os.path.join(root_dir, d)
+        if os.path.isdir(full) and d.startswith("set_mlp_s"):
+            return True
+    return False
+
+
+def _is_adjacency_layout(root_dir):
+    if not os.path.isdir(root_dir):
+        return False
+    names = os.listdir(root_dir)
+    return any(name.startswith("run_") or name.startswith("epoch_") for name in names)
+
+
+def _infer_source_name_from_path(path):
+    p = path.lower()
+    if "adjacency_matrices_rbm" in p:
+        return "rbm"
+    if "adjacency_matrices_static" in p:
+        return "static"
+    return "set_mlp"
+
+
+def analyze_adjacency_root(adj_root, g=5, n=10, matrix_type="dual"):
+    """
+    Analyze a single adjacency root passed via --experiment-root.
+    Supports either:
+      - adjacency_matrices/run_x/epoch_xxxx
+      - adjacency_matrices/epoch_xxxx
+    """
+    output_dir = "SET-MLP-Keras-Weights-Mask/results/similarity"
+    os.makedirs(output_dir, exist_ok=True)
+    source_name = _infer_source_name_from_path(adj_root)
+    print(
+        f"Adjacency-root mode: root={adj_root}, source={source_name}, "
+        f"g={g}, n={n}, matrix_type={matrix_type}"
+    )
+    analyze_source(source_name, adj_root, output_dir, g, [n], matrix_type)
+
+
 def main():
     args = sys.argv[1:]
     if any(arg.startswith("--") for arg in args):
@@ -654,24 +699,44 @@ def main():
         parser.add_argument("--matrix-type", type=str, default="dual")
         parsed = parser.parse_args(args)
         if parsed.experiment_root:
-            sparsities = _parse_sparsities(parsed.sparsities)
+            root_dir = parsed.experiment_root
+            if _is_experiments_layout(root_dir):
+                sparsities = _parse_sparsities(parsed.sparsities)
+                print(
+                    f"Batch mode: experiment_root={root_dir}, "
+                    f"sparsities={sparsities}, g={parsed.g}, n={parsed.n}, matrix_type={parsed.matrix_type}"
+                )
+                analyze_experiments(
+                    root_dir,
+                    sparsities,
+                    g=parsed.g,
+                    n=parsed.n,
+                    matrix_type=parsed.matrix_type,
+                )
+                print("\nAnalysis complete!")
+                return
+            if _is_adjacency_layout(root_dir):
+                if parsed.sparsities != "50,70,90,98":
+                    print("Note: --sparsities is ignored in adjacency-root mode.")
+                analyze_adjacency_root(
+                    root_dir,
+                    g=parsed.g,
+                    n=parsed.n,
+                    matrix_type=parsed.matrix_type,
+                )
+                print("\nAnalysis complete!")
+                return
             print(
-                f"Batch mode: experiment_root={parsed.experiment_root}, "
-                f"sparsities={sparsities}, g={parsed.g}, n={parsed.n}, matrix_type={parsed.matrix_type}"
+                f"Invalid --experiment-root layout: {root_dir}\n"
+                "Expected either:\n"
+                "  1) experiments root with set_mlp_sXX subfolders, or\n"
+                "  2) adjacency root containing run_* or epoch_* directories."
             )
-            analyze_experiments(
-                parsed.experiment_root,
-                sparsities,
-                g=parsed.g,
-                n=parsed.n,
-                matrix_type=parsed.matrix_type,
-            )
-            print("\nAnalysis complete!")
             return
         print("--experiment-root is required in flag mode.")
         return
 
-    output_dir = "SET-MLP-Keras-Weights-Mask/results"
+    output_dir = "SET-MLP-Keras-Weights-Mask/results/similarity"
     os.makedirs(output_dir, exist_ok=True)
     source = "set_mlp"
     g = 5

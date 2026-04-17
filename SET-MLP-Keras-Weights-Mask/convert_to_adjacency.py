@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import sys
+import argparse
 from scipy.sparse import csr_matrix, save_npz, load_npz
 
 # Which source to convert. Options: "set_mlp", "rbm", "static", "all"
@@ -319,8 +320,28 @@ def process_source(name, input_base, output_base):
 
 def main():
     global SOURCE
-    if len(sys.argv) > 1:
-        SOURCE = sys.argv[1].strip().lower()
+    parser = argparse.ArgumentParser(
+        description="Convert graph snapshots to adjacency matrices."
+    )
+    parser.add_argument(
+        "--snapshot",
+        type=str,
+        default=None,
+        help="Snapshot source to convert: set_mlp, rbm, static, or all.",
+    )
+    parser.add_argument(
+        "legacy_source",
+        nargs="?",
+        default=None,
+        help="Legacy positional source argument (set_mlp|rbm|static|all).",
+    )
+    args = parser.parse_args()
+
+    if args.snapshot:
+        SOURCE = args.snapshot.strip().lower()
+    elif args.legacy_source:
+        SOURCE = args.legacy_source.strip().lower()
+
     if SOURCE == "all":
         for name, (input_base, output_base) in SOURCES.items():
             process_source(name, input_base, output_base)
@@ -329,7 +350,8 @@ def main():
         process_source(SOURCE, input_base, output_base)
     else:
         print(f"Unknown source: '{SOURCE}'. Available: {list(SOURCES.keys())} or 'all'")
-        print("Usage: python convert_to_adjacency.py [set_mlp|rbm|static|all]")
+        print("Usage: python convert_to_adjacency.py --snapshot [set_mlp|rbm|static|all]")
+        print("Legacy usage: python convert_to_adjacency.py [set_mlp|rbm|static|all]")
 
 
 if __name__ == '__main__':

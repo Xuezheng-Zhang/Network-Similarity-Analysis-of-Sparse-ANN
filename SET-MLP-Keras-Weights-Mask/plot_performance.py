@@ -4,7 +4,7 @@ import numpy as np
 import os
 
 RESULTS_DIR = "SET-MLP-Keras-Weights-Mask/results"
-RUN_ID = 0 
+RUN_ID = 0
 
 if RUN_ID is not None:
     metadata_path = os.path.join(RESULTS_DIR, f"training_metadata_static_run_{RUN_ID}.json")
@@ -42,4 +42,3 @@ out_path = os.path.join(RESULTS_DIR, out_name)
 plt.savefig(out_path, dpi=300)
 print(f"Performance plot saved to {out_path}")
 plt.close()
-    

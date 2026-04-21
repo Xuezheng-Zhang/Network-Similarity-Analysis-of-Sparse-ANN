@@ -1,6 +1,4 @@
-"""
-Compute positive vs negative weights in neural network
-"""
+
 import json
 import numpy as np
 import os
@@ -9,7 +7,7 @@ from scipy.sparse import load_npz
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 
-# Same as convert_to_adjacency: read only from graph_snapshots directories
+
 SOURCES = {
     "set_mlp": os.path.join(RESULTS_DIR, "graph_snapshots"),
     "rbm": os.path.join(RESULTS_DIR, "graph_snapshots_rbm"),
@@ -18,7 +16,7 @@ SOURCES = {
 
 
 def load_weights_from_directory(stage_dir):
-    """Load all weight matrices from a stage directory; return weights dict and layer list."""
+
     weights = {}
     available_layers = []
     for layer in [1, 2, 3, 4]:
@@ -31,10 +29,7 @@ def load_weights_from_directory(stage_dir):
 
 
 def stats_one_matrix(W):
-    """
-    Count positive, negative, and zero entries in a single weight matrix and their percentages.
-    Returns dict with n_total, n_positive, n_negative, n_zero, pct_* (of nonzeros and of total).
-    """
+
     flat = np.ravel(W)
     n_total = flat.size
     n_positive = int(np.sum(flat > 0))
@@ -60,10 +55,7 @@ def stats_one_matrix(W):
 
 
 def collect_stats_for_stage(stage_dir):
-    """
-    Compute sign stats for all layers under one epoch/stage directory.
-    Returns a list of dicts, one per layer plus an "all" aggregate row.
-    """
+
     weights, available_layers = load_weights_from_directory(stage_dir)
     if not available_layers:
         return []
@@ -100,11 +92,7 @@ def collect_stats_for_stage(stage_dir):
 
 
 def process_snapshots_dir(input_dir, source_name, run_id=None):
-    """
-    Walk all epoch_* under input_dir and compute stats for after_training / after_pruning.
-    run_id: None means single model (no run_* subdirs).
-    Returns list of dicts with source, run, epoch, stage, layer, and all stat fields.
-    """
+
     epoch_dirs = sorted(
         [d for d in os.listdir(input_dir)
          if os.path.isdir(os.path.join(input_dir, d)) and d.startswith("epoch_")],
@@ -138,7 +126,7 @@ def process_snapshots_dir(input_dir, source_name, run_id=None):
 
 
 def run_source(source_name, input_base):
-    """Process one source: either a single model or multiple run_* subdirs."""
+
     if not os.path.isdir(input_base):
         print(f"Skipping {source_name}: directory not found {input_base}")
         return []
@@ -162,7 +150,7 @@ def run_source(source_name, input_base):
 
 
 def write_json(results, out_path):
-    """Write all stats to a single JSON file."""
+
     if not results:
         return
     with open(out_path, "w", encoding="utf-8") as f:
@@ -170,7 +158,7 @@ def write_json(results, out_path):
 
 
 def main():
-    # Default source is set_mlp; CLI can pass set_mlp / rbm / static / all
+
     source_arg = (sys.argv[1] if len(sys.argv) > 1 else "set_mlp").strip().lower()
     if source_arg not in ("set_mlp", "rbm", "static", "all"):
         print("Usage: python weight_sign_stats.py [set_mlp|rbm|static|all]")

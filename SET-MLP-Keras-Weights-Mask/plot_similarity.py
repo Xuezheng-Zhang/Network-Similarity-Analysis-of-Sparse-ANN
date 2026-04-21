@@ -17,7 +17,7 @@ TARGET_STEP_SIZES_BY_SOURCE = {
     "rbm": [1, 2],
     "static": [3, 5, 10, 20],
 }
-# Keep similarity curves away from green, which is reserved for accuracy.
+
 SIMILARITY_COLORS = ["#1f77b4", "#ff7f0e", "#d62728", "#9467bd"]
 STAGE_ORDER = ["Initial", "Training", "Stabilization"]
 STAGE_LABELS = {
@@ -35,15 +35,15 @@ def _resolve_similarity_file(filename, base_dir=RESULTS_DIR):
     return candidates[0]
 
 def load_val_accuracy_data(source="set_mlp"):
-    """Load validation accuracy data for a given source."""
-    # Try source-specific metadata files first
+
+
     if source == "rbm":
         pat = os.path.join(RESULTS_DIR, "training_metadata_rbm_run_*.json")
     elif source == "static":
         pat = os.path.join(RESULTS_DIR, "training_metadata_static_run_*.json")
     else:
         pat = os.path.join(RESULTS_DIR, "training_metadata_run_*.json")
-    
+
     files = sorted(glob.glob(pat))
     if files:
         acc_by_epoch = {}
@@ -56,8 +56,8 @@ def load_val_accuracy_data(source="set_mlp"):
                     acc_by_epoch[e] = []
                 acc_by_epoch[e].append(r["val_accuracy"])
         return {e: np.mean(a) for e, a in acc_by_epoch.items()}
-    
-    # Fallback to generic metadata file
+
+
     path = os.path.join(RESULTS_DIR, "training_metadata.json")
     if os.path.isfile(path):
         with open(path) as f:
@@ -66,7 +66,7 @@ def load_val_accuracy_data(source="set_mlp"):
     return {}
 
 def aggregate_similarity_mean(df):
-    """Group by (Epoch1, Epoch2, n), average Similarity over n runs."""
+
     between = df[df["Type"] == "Between_Epochs"].copy()
     if between.empty:
         return between
@@ -83,15 +83,15 @@ def get_val_accuracy_range(epoch1, epoch2, epoch_to_acc):
         accuracies.append(epoch_to_acc[epoch1])
     if epoch2 in epoch_to_acc:
         accuracies.append(epoch_to_acc[epoch2])
-    
+
     if not accuracies:
         return None
-    
+
     return accuracies
 
 
 def add_accuracy_line(epoch_to_acc):
-    """Add val accuracy as green line on right y-axis; left y-axis blue (similarity), right y-axis green (accuracy)."""
+
     if not epoch_to_acc:
         return
     ax = plt.gca()
@@ -111,7 +111,7 @@ def add_accuracy_line(epoch_to_acc):
 
 
 def _set_xlabel_rotation_30():
-    """Set x-axis tick labels to 30 degrees counterclockwise on the main axes."""
+
     fig = plt.gcf()
     if not fig.axes:
         return
@@ -122,7 +122,7 @@ def _set_xlabel_rotation_30():
 
 
 def _plot_similarity_multi_n(df, epoch_to_acc, title, output_path, source="set_mlp"):
-    """Plot one metric in one figure with multi-n curves + val accuracy."""
+
     between_epochs = aggregate_similarity_mean(df)
     if between_epochs.empty:
         print(f"No Between_Epochs data for {title}; skip.")
@@ -132,7 +132,7 @@ def _plot_similarity_multi_n(df, epoch_to_acc, title, output_path, source="set_m
     preferred_steps = TARGET_STEP_SIZES_BY_SOURCE.get(source, TARGET_STEP_SIZES_BY_SOURCE["set_mlp"])
     n_values = [n for n in preferred_steps if n in available_n]
     if not n_values:
-        # Fallback: if preferred steps do not exist, plot all available ones.
+
         n_values = sorted(available_n)
         print(
             f"No preferred step sizes {preferred_steps} found for {title}. "
@@ -186,11 +186,11 @@ def _plot_similarity_multi_n(df, epoch_to_acc, title, output_path, source="set_m
 
 
 def plot_deltacon_similarity_by_n(matrix_type="binary", source="set_mlp"):
-    """Plot DeltaCon similarity. matrix_type: 'binary', 'weighted', or 'dual' (uses _dual.csv)."""
+
     if matrix_type == "dual":
         plot_deltacon_similarity_dual_by_n(source)
         return
-    # Build CSV filename based on source
+
     if source == "set_mlp":
         similarity_file = _resolve_similarity_file(f"deltacon_similarity_{matrix_type}.csv")
     else:
@@ -208,7 +208,7 @@ def plot_deltacon_similarity_by_n(matrix_type="binary", source="set_mlp"):
     _plot_similarity_multi_n(df, epoch_to_acc, "DeltaCon Similarity", output_path, source=source)
 
 def plot_deltacon_similarity_dual_by_n(source="set_mlp"):
-    """Plot DeltaCon similarity for dual-channel (positive + negative) results."""
+
     if source == "set_mlp":
         similarity_file = _resolve_similarity_file("deltacon_similarity_set_mlp_dual.csv")
     else:
@@ -225,7 +225,7 @@ def plot_deltacon_similarity_dual_by_n(source="set_mlp"):
     _plot_similarity_multi_n(df, epoch_to_acc, "Dual DeltaCon Similarity", output_path, source=source)
 
 def plot_jaccard_similarity_by_n(matrix_type="binary", source="set_mlp"):
-    """Plot Jaccard similarity. matrix_type: 'binary', 'weighted', or 'dual' (uses _dual.csv)."""
+
     if matrix_type == "dual":
         plot_jaccard_similarity_dual_by_n(source)
         return
@@ -246,7 +246,7 @@ def plot_jaccard_similarity_by_n(matrix_type="binary", source="set_mlp"):
     _plot_similarity_multi_n(df, epoch_to_acc, "Jaccard Similarity", output_path, source=source)
 
 def plot_jaccard_similarity_dual_by_n(source="set_mlp"):
-    """Plot Jaccard similarity for dual-channel (positive + negative) results."""
+
     if source == "set_mlp":
         similarity_file = _resolve_similarity_file("jaccard_similarity_set_mlp_dual.csv")
     else:
@@ -267,21 +267,21 @@ def plot_similarity_between_epochs():
     df = pd.read_csv(similarity_file)
     between_epochs = df[df['Type'] == 'Between_Epochs'].copy()
 
-    # sort by epoch
+
     between_epochs = between_epochs.sort_values(['Epoch1', 'Epoch2'])
 
     epochs = between_epochs['Epoch1'].values
     similarities = between_epochs['Similarity'].values
-    
+
     plt.figure(figsize=(10, 6))
     plt.plot(epochs, similarities, linestyle='-', color='b', linewidth=2)
-    
+
     plt.title('DeltaCon Similarity Evolution', fontsize=14)
     plt.xlabel('Epoch Transition (t to t+1)', fontsize=12)
     plt.ylabel('Similarity Score', fontsize=12)
     plt.grid(True, which='both', linestyle='--', alpha=0.5)
     plt.xticks(epochs, rotation=30)
-    
+
     os.makedirs(GRAPH_DIR, exist_ok=True)
     output_path = os.path.join(GRAPH_DIR, "similarity_between_epochs.png")
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
@@ -293,21 +293,21 @@ def plot_similarity_within_epochs():
     df = pd.read_csv(similarity_file)
     within_epochs = df[df['Type'] == 'Within_Epoch'].copy()
 
-    # sort by epoch
+
     within_epochs = within_epochs.sort_values(['Epoch1', 'Epoch2'])
 
     epochs = within_epochs['Epoch1'].values
     similarities = within_epochs['Similarity'].values
-    
+
     plt.figure(figsize=(10, 6))
     plt.plot(epochs, similarities, linestyle='-', color='r', linewidth=2)
-    
+
     plt.title('DeltaCon Similarity Evolution', fontsize=14)
     plt.xlabel('Epoch Transition (t to t+n)', fontsize=12)
     plt.ylabel('Similarity Score', fontsize=12)
     plt.grid(True, which='both', linestyle='--', alpha=0.5)
     plt.xticks(epochs, rotation=30)
-    
+
     os.makedirs(GRAPH_DIR, exist_ok=True)
     output_path = os.path.join(GRAPH_DIR, "similarity_within_epochs.png")
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
@@ -384,7 +384,7 @@ def build_phase_similarity_summary(experiment_root, metric="deltacon", matrix_ty
         .agg(Avg_Similarity="mean", Count="count")
     )
 
-    # Fill missing phase combinations for stable plotting.
+
     all_pairs = pd.MultiIndex.from_product(
         [sorted(sparsities), STAGE_ORDER], names=["Sparsity", "Stage"]
     ).to_frame(index=False)
@@ -465,15 +465,15 @@ if __name__ == '__main__':
             print("Please run analyze_similarity.py batch mode after placing adjacency data.")
             sys.exit(1)
 
-    # Usage: python plot_similarity.py [source] [matrix_type]
-    # source: set_mlp, rbm, static (default: set_mlp)
-    # matrix_type: binary, weighted, dual, all (default: dual)
+
+
+
     VALID_SOURCES = ("set_mlp", "rbm", "static")
     VALID_MATRIX_TYPES = ("binary", "weighted", "dual", "all")
-    
+
     source = "set_mlp"
     matrix_type = "dual"
-    
+
     args = sys.argv[1:]
     if args:
         if args[0] in VALID_SOURCES:
@@ -496,5 +496,5 @@ if __name__ == '__main__':
     else:
         plot_deltacon_similarity_by_n(matrix_type, source)
         plot_jaccard_similarity_by_n(matrix_type, source)
-    
+
     print("All plots generated successfully!")

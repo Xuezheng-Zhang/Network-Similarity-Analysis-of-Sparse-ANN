@@ -8,7 +8,7 @@ STATS_FILE = os.path.join(RESULTS_DIR, "weight_sign_stats.json")
 
 
 def load_stats():
-    """Load weight_sign_stats.json; return list of records."""
+
     if not os.path.isfile(STATS_FILE):
         return []
     with open(STATS_FILE, "r", encoding="utf-8") as f:
@@ -16,9 +16,7 @@ def load_stats():
 
 
 def get_ratio_by_epoch(records, stage="after_training"):
-    """
-    Filter to layer=all and given stage; return list of (source, run, epoch, pct_pos, pct_neg).
-    """
+
     out = []
     for r in records:
         if r.get("layer") != "all" or r.get("stage") != stage:
@@ -34,7 +32,7 @@ def get_ratio_by_epoch(records, stage="after_training"):
 
 
 def plot_ratio_by_epoch():
-    """Plot pct positive and pct negative (of non-zero weights) vs epoch."""
+
     records = load_stats()
     if not records:
         print(f"No data in {STATS_FILE}; run weight_sign_stats.py first.")
@@ -45,7 +43,7 @@ def plot_ratio_by_epoch():
         print("No layer=all, stage=after_training rows in stats.")
         return
 
-    # Group by (source, run)
+
     by_key = defaultdict(list)
     for r in rows:
         key = (r["source"], r["run"] if r["run"] is not None else "single")

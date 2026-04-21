@@ -8,8 +8,6 @@ from scipy.sparse import load_npz
 import time
 from multiprocessing import Pool, cpu_count
 
-# Import DeltaCon functions
-# Add parent directory to path to import deltaCon module
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 deltacon_path = os.path.join(parent_dir, 'similarity_metrics')
@@ -21,24 +19,17 @@ from jaccard import Jaccard as JaccardSimilarity
 
 
 def _similarity_task(args):
-    """
-    Helper function for parallel similarity computation.
-    """
     file1, file2, g, matrix_type, epoch1_num, epoch2_num = args
     sim = compute_similarity(file1, file2, g, matrix_type)
     return epoch1_num, epoch2_num, sim
 
 def _jaccard_similarity_task(args):
-    """
-    Helper function for parallel Jaccard similarity computation.
-    """
     file1, file2, matrix_type, epoch1_num, epoch2_num = args
     sim = compute_jaccard_similarity(file1, file2, matrix_type)
     return epoch1_num, epoch2_num, sim
 
 
 def _similarity_dual_task(args):
-    """Helper for parallel dual-channel (positive + negative) DeltaCon similarity."""
     if len(args) == 9:
         file1_pos, file2_pos, file1_neg, file2_neg, g, epoch1_num, epoch2_num, w_pos, w_neg = args
         sim = compute_similarity_dual(file1_pos, file2_pos, file1_neg, file2_neg, g, w_pos=w_pos, w_neg=w_neg)
@@ -49,7 +40,6 @@ def _similarity_dual_task(args):
 
 
 def _jaccard_similarity_dual_task(args):
-    """Helper for parallel dual-channel Jaccard similarity."""
     if len(args) == 8:
         file1_pos, file2_pos, file1_neg, file2_neg, epoch1_num, epoch2_num, w_pos, w_neg = args
         sim = compute_jaccard_similarity_dual(file1_pos, file2_pos, file1_neg, file2_neg, w_pos=w_pos, w_neg=w_neg)
@@ -60,49 +50,34 @@ def _jaccard_similarity_dual_task(args):
 
 
 def get_epoch_dirs(base_dir):
-    """
-    Get all epoch directories sorted by epoch number
-    """
     epoch_dirs = []
     for d in os.listdir(base_dir):
         if os.path.isdir(os.path.join(base_dir, d)) and d.startswith('epoch_'):
             epoch_dirs.append(d)
-    
-    # Sort by epoch number
+
+
     epoch_dirs.sort(key=lambda x: int(x.split('_')[1]))
     return epoch_dirs
 
 def compute_similarity(file1, file2, g=5, matrix_type='binary'):
-    """
-    Compute DeltaCon similarity between two adjacency matrices
-    
-    Parameters:
-        file1: Path to first adjacency matrix file
-        file2: Path to second adjacency matrix file
-        g: Number of partitions for DeltaCon
-        matrix_type: 'binary' or 'weighted'
-    
-    Returns:
-        float: Similarity score (0-1)
-    """
     if not os.path.exists(file1):
         return None
     if not os.path.exists(file2):
         return None
-    
+
     try:
         A1 = load_adjacency_from_npz(file1, make_undirected=False, remove_self_loops=True)
         A2 = load_adjacency_from_npz(file2, make_undirected=False, remove_self_loops=True)
-        
+
         if matrix_type == 'weighted':
             A1.data = np.abs(A1.data)
             A2.data = np.abs(A2.data)
-        
-        # Check if matrices have the same size
+
+
         if A1.shape[0] != A2.shape[0]:
             print(f"Matrices do not have different sizes: {A1.shape[0]} vs {A2.shape[0]}")
             return None
-        
+
         sim = DeltaCon(A1, A2, g)
         return sim
     except Exception as e:
@@ -111,10 +86,6 @@ def compute_similarity(file1, file2, g=5, matrix_type='binary'):
 
 
 def compute_similarity_dual(file1_pos, file2_pos, file1_neg, file2_neg, g=5, w_pos=None, w_neg=None):
-    """
-    Compute DeltaCon similarity for dual-channel (positive + negative) graphs.
-    If w_pos, w_neg are provided use sim = w_pos*sim_pos + w_neg*sim_neg; else 0.5/0.5.
-    """
     sim_pos = compute_similarity(file1_pos, file2_pos, g=g, matrix_type='weighted')
     sim_neg = compute_similarity(file1_neg, file2_neg, g=g, matrix_type='weighted')
     if sim_pos is None or sim_neg is None:
@@ -125,31 +96,19 @@ def compute_similarity_dual(file1_pos, file2_pos, file1_neg, file2_neg, g=5, w_p
 
 
 def compute_jaccard_similarity(file1, file2, matrix_type='binary'):
-    """
-    Compute Jaccard similarity between two adjacency matrices
-    
-    Parameters:
-        file1: Path to first adjacency matrix file
-        file2: Path to second adjacency matrix file
-        matrix_type: 'binary' or 'weighted' (for Jaccard, only edge sets matter)
-    
-    Returns:
-        float: Jaccard similarity score (0-1)
-    """
     if not os.path.exists(file1):
         return None
     if not os.path.exists(file2):
         return None
-    
+
     try:
         A1 = load_adjacency_from_npz(file1, make_undirected=False, remove_self_loops=True)
         A2 = load_adjacency_from_npz(file2, make_undirected=False, remove_self_loops=True)
-        
-        # Check if matrices have the same size
+
         if A1.shape[0] != A2.shape[0]:
             print(f"Matrices do not have different sizes: {A1.shape[0]} vs {A2.shape[0]}")
             return None
-        
+
         sim = JaccardSimilarity(A1, A2)
         return sim
     except Exception as e:
@@ -158,10 +117,6 @@ def compute_jaccard_similarity(file1, file2, matrix_type='binary'):
 
 
 def compute_jaccard_similarity_dual(file1_pos, file2_pos, file1_neg, file2_neg, w_pos=None, w_neg=None):
-    """
-    Compute Jaccard similarity for dual-channel (positive + negative) graphs.
-    If w_pos, w_neg are provided use sim = w_pos*sim_pos + w_neg*sim_neg; else 0.5/0.5.
-    """
     sim_pos = compute_jaccard_similarity(file1_pos, file2_pos, matrix_type='weighted')
     sim_neg = compute_jaccard_similarity(file1_neg, file2_neg, matrix_type='weighted')
     if sim_pos is None or sim_neg is None:
@@ -172,17 +127,6 @@ def compute_jaccard_similarity_dual(file1_pos, file2_pos, file1_neg, file2_neg, 
 
 
 def analyze_epoch_similarities(base_dir, output_file, g=5, n=1, matrix_type='binary', run_id=None):
-    """
-    Analyze similarities between consecutive epochs and within each epoch.
-
-    Parameters:
-        base_dir: Base directory containing adjacency matrices (e.g. adjacency_matrices/run_0)
-        output_file: Output CSV path
-        g: Number of partitions for DeltaCon
-        matrix_type: 'binary', 'weighted', or 'dual' (positive + negative channels, 1:1 merged)
-        n: Step size for comparing epochs
-        run_id: If set, add 'Run' column to each row (for multi-run output).
-    """
     epoch_dirs = get_epoch_dirs(base_dir)
 
     if len(epoch_dirs) < 2:
@@ -194,11 +138,9 @@ def analyze_epoch_similarities(base_dir, output_file, g=5, n=1, matrix_type='bin
     print(f"DeltaCon parameter g: {g}")
     print(f"Step size n: {n}")
     print("-" * 70)
-    
+
     results = []
-    
-    # Build tasks for similarities (after_training)
-    # Using n as step size: compare 0-n, n-2n, 2n-3n, ...
+
     print("\nComputing similarities between epochs (after_training)")
     tasks = []
     if matrix_type == 'dual':
@@ -283,35 +225,35 @@ def analyze_epoch_similarities(base_dir, output_file, g=5, n=1, matrix_type='bin
                 else:
                     print("Failed")
 
-    # # 2. Compute similarities within each epoch (after_training vs after_pruning)
-    # print("\n2. Computing similarities within epochs (after_training vs after_pruning) ")
-    # for epoch_dir in epoch_dirs:
-    #     epoch_num = int(epoch_dir.split('_')[1])
-        
-    #     file1 = os.path.join(base_dir, epoch_dir, f'after_training_{matrix_type}.npz')
-    #     file2 = os.path.join(base_dir, epoch_dir, f'after_pruning_{matrix_type}.npz')
-        
-    #     if not os.path.exists(file2):
-    #         print(f"  Epoch {epoch_num}: after_pruning not found, skipping ")
-    #         continue
-        
-    #     print(f"  Computing: Epoch {epoch_num} (training vs pruning)", end=' ')
-    #     sim = compute_similarity(file1, file2, g, matrix_type)
-        
-    #     if sim is not None:
-    #         results.append({
-    #             'Type': 'Within_Epoch',
-    #             'Epoch1': epoch_num,
-    #             'Epoch2': epoch_num,
-    #             'Stage1': 'after_training',
-    #             'Stage2': 'after_pruning',
-    #             'Similarity': sim,
-    #             'Matrix_Type': matrix_type
-    #         })
-    #         print(f"Similarity: {sim:.6f}")
-    #     else:
-    #         print("Failed")
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     if not results:
         return
     df = pd.DataFrame(results)
@@ -323,16 +265,6 @@ def analyze_epoch_similarities(base_dir, output_file, g=5, n=1, matrix_type='bin
     df.to_csv(output_file, mode='a', index=False, float_format='%.8f', header=not file_exists)
 
 def analyze_jaccard_similarities(base_dir, output_file, n=1, matrix_type='binary', run_id=None):
-    """
-    Analyze Jaccard similarities between consecutive epochs.
-
-    Parameters:
-        base_dir: Base directory containing adjacency matrices (e.g. adjacency_matrices/run_0)
-        output_file: Output CSV path
-        matrix_type: 'binary', 'weighted', or 'dual' (positive + negative channels, 1:1 merged)
-        n: Step size for comparing epochs
-        run_id: If set, add 'Run' column to each row (for multi-run output).
-    """
     epoch_dirs = get_epoch_dirs(base_dir)
 
     if len(epoch_dirs) < 2:
@@ -344,11 +276,9 @@ def analyze_jaccard_similarities(base_dir, output_file, n=1, matrix_type='binary
     print(f"Similarity method: Jaccard")
     print(f"Step size n: {n}")
     print("-" * 70)
-    
+
     results = []
-    
-    # Build tasks for Jaccard similarities (after_training)
-    # Using n as step size: compare 0-n, n-2n, 2n-3n, ...
+
     print("\nComputing Jaccard similarities between epochs (after_training)")
     tasks = []
     if matrix_type == 'dual':
@@ -445,7 +375,6 @@ def analyze_jaccard_similarities(base_dir, output_file, n=1, matrix_type='binary
     df.to_csv(output_file, mode='a', index=False, float_format='%.8f', header=not file_exists)
 
 def get_run_dirs(adj_base):
-    """Return sorted run dirs (run_0, run_1, ...) under adjacency_matrices."""
     if not os.path.isdir(adj_base):
         return []
     out = []
@@ -462,7 +391,6 @@ def get_run_dirs(adj_base):
 
 
 def _infer_source_from_base_dir(base_dir):
-    """Infer weight_sign_stats source from adjacency base path."""
     if 'adjacency_matrices_static' in base_dir:
         return 'static'
     if 'adjacency_matrices_rbm' in base_dir:
@@ -471,11 +399,6 @@ def _infer_source_from_base_dir(base_dir):
 
 
 def _load_weight_sign_lookup(results_dir):
-    """
-    Load results/weight_sign_stats.json and build lookup (source, run, epoch) -> (w_pos, w_neg).
-    Uses layer='all', stage='after_training'. run is normalized to '' for single run.
-    Returns dict or None if file missing/invalid.
-    """
     path = os.path.join(results_dir, 'weight_sign_stats.json')
     if not os.path.isfile(path):
         return None
@@ -501,7 +424,6 @@ def _load_weight_sign_lookup(results_dir):
 
 
 def _dual_weights_for_pair(lookup, source, run_id, epoch1_num, epoch2_num):
-    """Get w_pos, w_neg for (epoch1, epoch2) from lookup; fallback (0.5, 0.5)."""
     if lookup is None:
         return 0.5, 0.5
     run_key = '' if run_id is None else run_id
@@ -524,15 +446,12 @@ SOURCES = {
 
 
 def analyze_source(source_name, adj_base, output_dir, g, n_values, matrix_type):
-    """Analyze a single data source."""
     if not os.path.exists(adj_base):
         print(f"Skipping {source_name}: {adj_base} not found")
         return
-    
-    print(f"\n{'#'*60}")
+
     print(f"# Analyzing source: {source_name}")
     print(f"# adj_base: {adj_base}")
-    print(f"{'#'*60}")
 
     run_dirs = get_run_dirs(adj_base)
     if not run_dirs:
@@ -543,11 +462,9 @@ def analyze_source(source_name, adj_base, output_dir, g, n_values, matrix_type):
         base_dirs = [os.path.join(adj_base, r) for r in run_dirs]
         run_ids = [int(r.replace('run_', '')) for r in run_dirs]
 
-    # Output files include source name to distinguish results
     deltacon_csv = os.path.join(output_dir, f'deltacon_similarity_{source_name}_{matrix_type}.csv')
     jaccard_csv = os.path.join(output_dir, f'jaccard_similarity_{source_name}_{matrix_type}.csv')
 
-    # Always start from fresh CSV files
     if os.path.exists(deltacon_csv):
         os.remove(deltacon_csv)
     if os.path.exists(jaccard_csv):
@@ -590,12 +507,6 @@ def _append_sparsity_column(input_csv, output_csv, sparsity):
 
 
 def analyze_experiments(experiment_root, sparsities, g=5, n=10, matrix_type="dual"):
-    """
-    Batch analyze multiple sparsity experiments that already contain adjacency_matrices.
-
-    Expected per sparsity directory:
-      {experiment_root}/set_mlp_s{S}/adjacency_matrices[/run_0]/epoch_xxxx/*.npz
-    """
     os.makedirs(experiment_root, exist_ok=True)
     n_values = [n]
     combined_dir = os.path.join(experiment_root, "similarity")
@@ -672,12 +583,6 @@ def _infer_source_name_from_path(path):
 
 
 def analyze_adjacency_root(adj_root, g=5, n=10, matrix_type="dual"):
-    """
-    Analyze a single adjacency root passed via --experiment-root.
-    Supports either:
-      - adjacency_matrices/run_x/epoch_xxxx
-      - adjacency_matrices/epoch_xxxx
-    """
     output_dir = "SET-MLP-Keras-Weights-Mask/results/similarity"
     os.makedirs(output_dir, exist_ok=True)
     source_name = _infer_source_name_from_path(adj_root)

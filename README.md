@@ -7,7 +7,7 @@ The project aims to study and analyze the structural evolution trends of sparse 
   - DeltaCon
   - Jaccard
 - Train sparse neural networks and save its graph snapshots.
-- Convert networks to adjacency matrices, we have three mode:
+- Convert networks to adjacency matrices, include three modes:
   - binary
   - weighted
   - dual

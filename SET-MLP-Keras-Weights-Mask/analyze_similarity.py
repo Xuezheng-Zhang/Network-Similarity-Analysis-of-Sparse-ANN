@@ -224,36 +224,6 @@ def analyze_epoch_similarities(base_dir, output_file, g=5, n=1, matrix_type='bin
                     print(f"Similarity: {sim:.6f}")
                 else:
                     print("Failed")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     if not results:
         return
     df = pd.DataFrame(results)
@@ -544,16 +514,6 @@ def analyze_experiments(experiment_root, sparsities, g=5, n=10, matrix_type="dua
             wrote_jaccard = True
         _append_sparsity_column(per_delta, combined_delta, sparsity)
         _append_sparsity_column(per_jaccard, combined_jaccard, sparsity)
-
-    print("\nBatch experiment analysis complete.")
-    if wrote_delta and os.path.isfile(combined_delta):
-        print(f"Combined DeltaCon CSV: {combined_delta}")
-    else:
-        print("Combined DeltaCon CSV not created (no valid per-sparsity results found).")
-    if wrote_jaccard and os.path.isfile(combined_jaccard):
-        print(f"Combined Jaccard CSV: {combined_jaccard}")
-    else:
-        print("Combined Jaccard CSV not created (no valid per-sparsity results found).")
 
 
 def _is_experiments_layout(root_dir):

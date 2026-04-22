@@ -26,6 +26,9 @@ STAGE_LABELS = {
     "Stabilization": "Stabilization (80%+)",
 }
 
+VALID_SOURCES = ("set_mlp", "rbm", "static")
+VALID_MATRIX_TYPES = ("binary", "weighted", "dual", "all")
+
 
 def _resolve_similarity_file(filename, base_dir=RESULTS_DIR):
     candidates = [os.path.join(base_dir, filename), os.path.join(base_dir, "similarity", filename)]
@@ -464,12 +467,6 @@ if __name__ == '__main__':
             print(f"Phase plotting failed: {e}")
             print("Please run analyze_similarity.py batch mode after placing adjacency data.")
             sys.exit(1)
-
-
-
-
-    VALID_SOURCES = ("set_mlp", "rbm", "static")
-    VALID_MATRIX_TYPES = ("binary", "weighted", "dual", "all")
 
     source = "set_mlp"
     matrix_type = "dual"

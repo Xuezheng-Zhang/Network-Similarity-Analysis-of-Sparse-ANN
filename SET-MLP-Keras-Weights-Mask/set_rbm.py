@@ -9,6 +9,9 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 
+GRAPH_SNAPSHOTS_RBM_BASE = "SET-MLP-Keras-Weights-Mask/results/graph_snapshots_rbm"
+RESULTS_DIR = "SET-MLP-Keras-Weights-Mask/results"
+
 try:
     from tensorflow.keras.datasets import mnist
 except ImportError:
@@ -55,10 +58,6 @@ class Sigmoid:
         za[za>prob]=1
         za[za<=prob]=0
         return za
-
-
-GRAPH_SNAPSHOTS_RBM_BASE = "SET-MLP-Keras-Weights-Mask/results/graph_snapshots_rbm"
-RESULTS_DIR = "SET-MLP-Keras-Weights-Mask/results"
 
 
 class SET_RBM:

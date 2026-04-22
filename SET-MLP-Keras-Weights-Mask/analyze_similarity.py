@@ -621,8 +621,6 @@ def main():
                 print("\nAnalysis complete!")
                 return
             if _is_adjacency_layout(root_dir):
-                if parsed.sparsities != "50,70,90,98":
-                    print("Note: --sparsities is ignored in adjacency-root mode.")
                 analyze_adjacency_root(
                     root_dir,
                     g=parsed.g,
@@ -631,14 +629,7 @@ def main():
                 )
                 print("\nAnalysis complete!")
                 return
-            print(
-                f"Invalid --experiment-root layout: {root_dir}\n"
-                "Expected either:\n"
-                "  1) experiments root with set_mlp_sXX subfolders, or\n"
-                "  2) adjacency root containing run_* or epoch_* directories."
-            )
             return
-        print("--experiment-root is required in flag mode.")
         return
 
     output_dir = "SET-MLP-Keras-Weights-Mask/results/similarity"
